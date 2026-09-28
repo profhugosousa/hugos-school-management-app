@@ -89,5 +89,55 @@
       "cancel": "Cancelar",
       "confirm": "Eliminar"
     }
+  },
+  "activeYear": {
+    "current": "Ano Letivo Ativo",
+    "none": "Nenhum Ano Letivo Ativo Definido",
+    "warningTitle": "AVISO",
+    "noActiveWarning": "Nenhum ano letivo ativo selecionado. Dados como aulas e turmas não poderão ser associados corretamente.",
+    "configureNow": "Gerir Anos"
+  },
+  "notifications": {
+    "errorTitle": "Erro do Sistema",
+    "warningTitle": "Aviso",
+    "successTitle": "Sucesso"
+  },
+  "lessons": {
+    "title": "Aulas",
+    "subtitle": "Gerir e agendar aulas para o ano letivo ativo.",
+    "add": "Adicionar Aula",
+    "import": "Importar Aulas",
+    "loading": "A CARREGAR AULAS...",
+    "empty": "NENHUMA AULA ENCONTRADA PARA ESTE ANO LETIVO.",
+    "columns": {
+      "subject": "Disciplina / Tópico",
+      "group": "Turma / Grupo",
+      "date": "Data",
+      "time": "Horário",
+      "room": "Sala",
+      "actions": "Ações"
+    },
+    "modal": {
+      "createTitle": "Criar Nova Aula",
+      "editTitle": "Editar Aula",
+      "subject": "Disciplina / Tópico",
+      "subjectPlaceholder": "ex. Matemática - Introdução à Álgebra",
+      "group": "Turma / Grupo",
+      "groupPlaceholder": "ex. 10º Ano - Turma A",
+      "date": "Data",
+      "startTime": "Hora de Início",
+      "endTime": "Hora de Fim",
+      "room": "Sala / Local",
+      "roomPlaceholder": "ex. Sala 204",
+      "cancel": "Cancelar",
+      "save": "Guardar Aula"
+    },
+    "importModal": {
+      "title": "Importar Aulas em Bloco",
+      "description": "Cole os dados em formato CSV: Disciplina, Turma, Data (AAAA-MM-DD), HoraInicio (HH:MM), HoraFim (HH:MM), Sala",
+      "placeholder": "Matemática, Turma A, 2026-10-01, 09:00, 10:30, Sala 101\nFísica, Turma B, 2026-10-01, 11:00, 12:30, Lab 2",
+      "cancel": "Cancelar",
+      "submit": "Importar Aulas"
+    }
   }
 }

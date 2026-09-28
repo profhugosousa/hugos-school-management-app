@@ -93,5 +93,55 @@
       "cancel": "Cancel",
       "confirm": "Delete"
     }
+  },
+  "activeYear": {
+    "current": "Active Academic Year",
+    "none": "No Active Academic Year Set",
+    "warningTitle": "WARNING",
+    "noActiveWarning": "No active academic year selected. Scoped data like lessons and groups cannot be properly assigned.",
+    "configureNow": "Manage Years"
+  },
+  "notifications": {
+    "errorTitle": "System Error",
+    "warningTitle": "Warning",
+    "successTitle": "Success"
+  },
+  "lessons": {
+    "title": "Lessons",
+    "subtitle": "Manage and schedule lessons for the active academic year.",
+    "add": "Add Lesson",
+    "import": "Import Lessons",
+    "loading": "LOADING LESSONS...",
+    "empty": "NO LESSONS FOUND FOR THIS ACADEMIC YEAR.",
+    "columns": {
+      "subject": "Subject / Topic",
+      "group": "Class / Group",
+      "date": "Date",
+      "time": "Time",
+      "room": "Room",
+      "actions": "Actions"
+    },
+    "modal": {
+      "createTitle": "Create New Lesson",
+      "editTitle": "Edit Lesson",
+      "subject": "Subject / Topic",
+      "subjectPlaceholder": "e.g. English",
+      "group": "Class / Group",
+      "groupPlaceholder": "e.g. 10th Grade - Class A",
+      "date": "Date",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "room": "Room / Location",
+      "roomPlaceholder": "e.g. Room 204",
+      "cancel": "Cancel",
+      "save": "Save Lesson"
+    },
+    "importModal": {
+      "title": "Bulk Import Lessons",
+      "description": "Paste CSV data formatted as: Subject, ClassGroup, Date (YYYY-MM-DD), StartTime (HH:MM), EndTime (HH:MM), Room",
+      "placeholder": "Mathematics, Class A, 2026-10-01, 09:00, 10:30, Room 101\nPhysics, Class B, 2026-10-01, 11:00, 12:30, Lab 2",
+      "cancel": "Cancel",
+      "submit": "Import Lessons"
+    }
   }
 }

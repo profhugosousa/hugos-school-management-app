@@ -127,6 +127,20 @@ export const lessonService = {
 	},
 
 	/**
+	 * Fetch lessons filtered by academic year.
+	 */
+	async getByAcademicYear(academicYearId) {
+		const { data, error } = await supabase
+			.from("view_lessons")
+			.select("*")
+			.eq("academic_year_id", academicYearId)
+			.order("lesson_date", { ascending: false });
+
+		if (error) throw new Error(`Failed to fetch lessons for academic year: ${error.message}`);
+		return data;
+	},
+
+	/**
 	 * Delete lesson entity (Cascades attribute tables).
 	 */
 	async delete(lessonId) {
