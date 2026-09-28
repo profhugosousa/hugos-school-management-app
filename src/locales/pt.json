@@ -1,6 +1,7 @@
 {
-  "app_title": "Gestor Escolar",
-  "navigation": {
+  "app_title": "Sistema de Gestão Escolar",
+  "nav": {
+    "brand": "SGE",
     "dashboard": "Painel",
     "students": "Alunos",
     "lessons": "Aulas",
@@ -14,5 +15,62 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "toggle_theme": "Alternar Tema"
+  },
+  "auth": {
+    "gateway": "SGE // AUTENTICATION",
+    "adminAccess": "Acesso Admin",
+    "subtitle": "Autentique as suas credenciais para aceder à consola de gestão.",
+    "emailLabel": "Endereço de E-mail",
+    "emailPlaceholder": "admin@dominio.com",
+    "passwordLabel": "Palavra-passe",
+    "passwordPlaceholder": "••••••••••••",
+    "show": "MOSTRAR",
+    "hide": "OCULTAR",
+    "authenticating": "A autenticar...",
+    "signIn": "Entrar",
+    "secureProtocol": "PROTOCOLO SEGURO",
+    "invalidCredentials": "Credenciais de acesso inválidas."
+  },
+  "common": {
+    "version": "v1.0.0",
+    "language": "Idioma",
+    "initializing": "A INICIALIZAR O SISTEMA...",
+    "logout": "Sair"
+  },
+  "academicYears": {
+    "title": "Anos Letivos",
+    "subtitle": "Gerir os períodos do calendário escolar, datas e estado ativo.",
+    "add": "Adicionar Ano Letivo",
+    "loading": "A CARREGAR ANOS LETIVOS...",
+    "empty": "NENHUM ANO LETIVO ENCONTRADO. CLIQUE EM \"ADICIONAR ANO LETIVO\" PARA CRIAR UM.",
+    "columns": {
+      "label": "Etiqueta",
+      "startDate": "Data de Início",
+      "endDate": "Data de Fim",
+      "status": "Estado",
+      "actions": "Ações"
+    },
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "modal": {
+      "createTitle": "Criar Ano Letivo",
+      "editTitle": "Editar Ano Letivo",
+      "label": "Etiqueta do Ano",
+      "labelPlaceholder": "ex. 2025/2026",
+      "startDate": "Data de Início",
+      "endDate": "Data de Fim",
+      "setActive": "Definir como Ano Letivo Ativo",
+      "cancel": "Cancelar",
+      "create": "Criar",
+      "update": "Atualizar"
+    },
+    "deleteModal": {
+      "title": "Confirmar Eliminação",
+      "description": "Tem a certeza que pretende eliminar este ano letivo? Inscrições ou unidades de planeamento associadas podem estar protegidas por regras de integridade.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
+    }
   }
 }
