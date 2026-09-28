@@ -1,23 +1,48 @@
 @import "tailwindcss";
 
+:root {
+  --bg-main: #E0E0E0;
+  --text-main: #121212;
+  --text-muted: #444444;
+  --border-main: #B0B0B0;
+  --accent-main: #888888;
+}
+
+.dark {
+  --bg-main: #121212;
+  --text-main: #E0E0E0;
+  --text-muted: #B0B0B0;
+  --border-main: #444444;
+  --accent-main: #888888;
+}
+
 @theme {
-  /* Dark Theme Palette (Monochromatic Minimalism) */
+  /* Your Exact Dark Theme Palette */
   --color-dark-bg: #121212;
   --color-dark-primary: #E0E0E0;
   --color-dark-secondary: #B0B0B0;
   --color-dark-border: #444444;
   --color-dark-accent: #888888;
 
-  /* Light Theme Palette (Inverted) */
+  /* Your Exact Light Theme Palette */
   --color-light-bg: #E0E0E0;
   --color-light-primary: #121212;
   --color-light-secondary: #444444;
   --color-light-border: #B0B0B0;
   --color-light-accent: #888888;
+
+  /* Automatic Semantic Aliases */
+  --color-main: var(--bg-main);
+  --color-content: var(--text-main);
+  --color-muted: var(--text-muted);
+  --color-line: var(--border-main);
+  --color-accent: var(--accent-main);
 }
 
 @layer base {
   body {
-    @apply bg-[var(--color-light-bg)] text-[var(--color-light-primary)] dark:bg-[var(--color-dark-bg)] dark:text-[var(--color-dark-primary)] transition-colors duration-200 antialiased;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    @apply transition-colors duration-200 antialiased;
   }
 }
