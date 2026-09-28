@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { AcademicYearContext } from '../context/AcademicYearProvider'
+import { AcademicYearContext } from '../context/AcademicYearContext'
 
 export const useActiveAcademicYear = () => {
     const context = useContext(AcademicYearContext)
