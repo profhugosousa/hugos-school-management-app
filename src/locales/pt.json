@@ -7,7 +7,8 @@
     "lessons": "Aulas",
     "planning": "Unidades de Planeamento",
     "evaluations": "Avaliações",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "academicYears": "Anos Letivos"
   },
   "actions": {
     "save": "Guardar",
@@ -36,6 +37,7 @@
     "language": "Idioma",
     "initializing": "A INICIALIZAR O SISTEMA...",
     "logout": "Sair",
+    "viewNotImplemented": "view not implemented",
     "modals": {
       "confirmDeletionTitle": "Confirmar Eliminação",
       "confirmDeletionDesc": "Tem a certeza de que pretende eliminar este item? Esta ação não pode ser desfeita.",

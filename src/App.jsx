@@ -1,13 +1,16 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MainLayout } from './components/layout/MainLayout'
-import { AuthProvider } from './context/AuthContext.jsx'
-import { SidebarProvider } from './context/SidebarContext.jsx'
-import { ThemeProvider } from './context/ThemeContext.jsx'
+import { AuthProvider } from './context/AuthContext'
+import { SidebarProvider } from './context/SidebarContext'
+import { ThemeProvider } from './context/ThemeContext'
+import { AcademicYearsPage } from './features/academic-years/AcademicYearsPage'
 import { LoginPage } from './features/auth/LoginPage'
 import { useAuth } from './hooks/useAuth'
 
 const AppContent = () => {
   const { user, loading } = useAuth()
+  const [currentView, setCurrentView] = useState('academic-years')
   const { t } = useTranslation()
 
   if (loading) {
@@ -22,16 +25,22 @@ const AppContent = () => {
     return <LoginPage />
   }
 
+  const renderView = () => {
+    switch (currentView) {
+      case 'academic-years':
+        return <AcademicYearsPage />
+      default:
+        return (
+          <div className="p-6 border border-line bg-main font-mono text-xs text-muted uppercase">
+            {currentView} {t('common.viewNotImplemented')}
+          </div>
+        )
+    }
+  }
+
   return (
-    <MainLayout>
-      <div className="border border-line p-4 sm:p-6 bg-main">
-        <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-content">
-          {t('dashboard.title')}
-        </h2>
-        <p className="text-xs text-muted font-mono mt-1">
-          {t('dashboard.subtitle')}
-        </p>
-      </div>
+    <MainLayout currentView={currentView} onViewChange={setCurrentView}>
+      {renderView()}
     </MainLayout>
   )
 }

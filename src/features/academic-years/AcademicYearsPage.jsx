@@ -1,7 +1,8 @@
 import { AlertCircle } from 'lucide-react'
 import { useState } from 'react'
+import { CompleteModal } from '../../components/common/modals/CompleteModal'
+import { ConfirmModal } from '../../components/common/modals/ConfirmModal'
 import { useAcademicYears } from '../../hooks/useAcademicYears'
-import { AcademicYearDeleteModal } from './components/AcademicYearDeleteModal'
 import { AcademicYearFormModal } from './components/AcademicYearFormModal'
 import { AcademicYearHeader } from './components/AcademicYearHeader'
 import { AcademicYearTable } from './components/AcademicYearTable'
@@ -18,35 +19,66 @@ export const AcademicYearsPage = () => {
         toggleActiveStatus
     } = useAcademicYears()
 
+    // Modal State Control
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [editingYear, setEditingYear] = useState(null)
-    const [deletingId, setDeletingId] = useState(null)
+    const [pendingFormData, setPendingFormData] = useState(null)
 
+    const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false)
+    const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+
+    const [completeModalState, setCompleteModalState] = useState({
+        isOpen: false,
+        type: 'update' // 'update' | 'deletion'
+    })
+
+    // Handlers
     const handleOpenCreate = () => {
         setEditingYear(null)
+        setPendingFormData(null)
         setIsFormOpen(true)
     }
 
     const handleOpenEdit = (year) => {
         setEditingYear(year)
+        setPendingFormData(null)
         setIsFormOpen(true)
     }
 
+    // Submission Step 1: Form submit triggers confirmation modal for edits
     const handleFormSubmit = async (formData) => {
-        const success = editingYear
-            ? await updateYear(editingYear.id, formData)
-            : await createYear(formData)
-
-        if (success) {
+        if (editingYear) {
+            setPendingFormData(formData)
             setIsFormOpen(false)
+            setConfirmUpdateOpen(true)
+        } else {
+            const success = await createYear(formData)
+            if (success) {
+                setIsFormOpen(false)
+                setCompleteModalState({ isOpen: true, type: 'update' })
+            }
         }
     }
 
-    const handleDeleteConfirm = async () => {
-        if (!deletingId) return
-        const success = await deleteYear(deletingId)
+    // Submission Step 2: Confirm Update Execution
+    const handleConfirmUpdate = async () => {
+        if (!editingYear || !pendingFormData) return
+        const success = await updateYear(editingYear.id, pendingFormData)
         if (success) {
-            setDeletingId(null)
+            setConfirmUpdateOpen(false)
+            setPendingFormData(null)
+            setEditingYear(null)
+            setCompleteModalState({ isOpen: true, type: 'update' })
+        }
+    }
+
+    // Deletion Execution
+    const handleConfirmDelete = async () => {
+        if (!confirmDeleteId) return
+        const success = await deleteYear(confirmDeleteId)
+        if (success) {
+            setConfirmDeleteId(null)
+            setCompleteModalState({ isOpen: true, type: 'deletion' })
         }
     }
 
@@ -65,10 +97,11 @@ export const AcademicYearsPage = () => {
                 years={years}
                 loading={loading}
                 onEdit={handleOpenEdit}
-                onDelete={(id) => setDeletingId(id)}
+                onDelete={(id) => setConfirmDeleteId(id)}
                 onToggleActive={toggleActiveStatus}
             />
 
+            {/* Create / Edit Form Modal */}
             <AcademicYearFormModal
                 key={isFormOpen ? (editingYear?.id || 'new-modal') : 'closed-modal'}
                 isOpen={isFormOpen}
@@ -78,11 +111,29 @@ export const AcademicYearsPage = () => {
                 onSubmit={handleFormSubmit}
             />
 
-            <AcademicYearDeleteModal
-                isOpen={Boolean(deletingId)}
+            {/* Confirm Update Modal */}
+            <ConfirmModal
+                isOpen={confirmUpdateOpen}
+                variant="warning"
                 submitting={submitting}
-                onClose={() => setDeletingId(null)}
-                onConfirm={handleDeleteConfirm}
+                onClose={() => setConfirmUpdateOpen(false)}
+                onConfirm={handleConfirmUpdate}
+            />
+
+            {/* Confirm Deletion Modal */}
+            <ConfirmModal
+                isOpen={Boolean(confirmDeleteId)}
+                variant="danger"
+                submitting={submitting}
+                onClose={() => setConfirmDeleteId(null)}
+                onConfirm={handleConfirmDelete}
+            />
+
+            {/* Completion Feedback Modal (Handles both Update Complete & Deletion Complete) */}
+            <CompleteModal
+                isOpen={completeModalState.isOpen}
+                type={completeModalState.type}
+                onClose={() => setCompleteModalState((prev) => ({ ...prev, isOpen: false }))}
             />
         </div>
     )
