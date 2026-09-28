@@ -1,0 +1,18 @@
+{
+  "app_title": "Gestor Escolar",
+  "navigation": {
+    "dashboard": "Painel",
+    "students": "Alunos",
+    "lessons": "Aulas",
+    "planning": "Unidades de Planeamento",
+    "evaluations": "Avaliações",
+    "settings": "Configurações"
+  },
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "toggle_theme": "Alternar Tema"
+  }
+}

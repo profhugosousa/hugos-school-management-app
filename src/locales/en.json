@@ -1,0 +1,18 @@
+{
+  "app_title": "School Manager",
+  "navigation": {
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "lessons": "Lessons",
+    "planning": "Planning Units",
+    "evaluations": "Evaluations",
+    "settings": "Settings"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "toggle_theme": "Toggle Theme"
+  }
+}
