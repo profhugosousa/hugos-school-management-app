@@ -35,7 +35,22 @@
     "version": "v1.0.0",
     "language": "Idioma",
     "initializing": "A INICIALIZAR O SISTEMA...",
-    "logout": "Sair"
+    "logout": "Sair",
+    "modals": {
+      "confirmDeletionTitle": "Confirmar Eliminação",
+      "confirmDeletionDesc": "Tem a certeza de que pretende eliminar este item? Esta ação não pode ser desfeita.",
+      "confirmUpdateTitle": "Confirmar Atualização",
+      "confirmUpdateDesc": "Tem a certeza de que pretende atualizar este item com as novas informações?",
+      "deletionCompleteTitle": "Eliminado com Sucesso",
+      "deletionCompleteDesc": "O item foi removido permanentemente.",
+      "updateCompleteTitle": "Atualizado com Sucesso",
+      "updateCompleteDesc": "O item foi atualizado com sucesso.",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "delete": "Eliminar",
+      "update": "Atualizar",
+      "close": "Fechar"
+    }
   },
   "academicYears": {
     "title": "Anos Letivos",
