@@ -435,7 +435,7 @@ BEGIN
 
   -- Extract the last integer if lesson_number was a double (e.g. "13 e 14" -> 14, or "12" -> 12)
   IF v_last_number_str IS NOT NULL THEN
-    v_last_num := (regexp_matches(v_last_number_str, '\d+', 'g'))[1]::INT;
+    v_last_num := (regexp_match(v_last_number_str, '(\d+)\D*$'))[1]::INT;
   END IF;
 
   v_next_num := v_last_num + 1;
