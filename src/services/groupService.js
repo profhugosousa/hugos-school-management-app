@@ -35,10 +35,25 @@ export const groupService = {
 			supabase.from('group_level_assignments').select('level_id').eq('group_id', id).single()
 		])
 
+		let levelName = ''
+		if (levelRes.data?.level_id) {
+			const { data: levelData } = await supabase
+				.from('level_names')
+				.select('name')
+				.eq('level_id', levelRes.data.level_id)
+				.single()
+			levelName = levelData?.name || ''
+		}
+
+		const groupName = nameRes.data?.name || ''
+		const displayName = [levelName, groupName].filter(Boolean).join(' - ') || id
+
 		return {
 			id,
-			name: nameRes.data?.name || '',
-			levelId: levelRes.data?.level_id || null
+			name: groupName,
+			levelId: levelRes.data?.level_id || null,
+			levelName,
+			displayName
 		}
 	},
 
