@@ -455,6 +455,10 @@ $$ LANGUAGE plpgsql;
 -- CONVENIENCE READ VIEWS (FLATTENS 6NF FOR APPLICATION SERVICE LAYERS)
 -- ============================================================================
 
+-- ============================================================================
+-- VIEW: STUDENTS (AND GUARDIANS' RELATIONSHIPS)
+-- ============================================================================
+
 CREATE OR REPLACE VIEW view_students AS
 SELECT 
   s.id,
@@ -463,7 +467,29 @@ SELECT
   sb.birthdate,
   COALESCE(sg.gender, 'undefined'::student_gender_enum) AS gender,
   sp.photo_url,
-  se.extra_info
+  se.extra_info,
+  COALESCE(
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', g.id,
+          'name', gn.name,
+          'phone_number', gp.phone_number,
+          'email', ge.email,
+          'relationship', sgr.relationship
+        )
+      )
+      FROM student_guardians stg
+      JOIN guardians g ON stg.guardian_id = g.id
+      LEFT JOIN guardian_names gn ON g.id = gn.guardian_id
+      LEFT JOIN guardian_phones gp ON g.id = gp.guardian_id
+      LEFT JOIN guardian_emails ge ON g.id = ge.guardian_id
+      LEFT JOIN student_guardian_relationships sgr 
+        ON stg.student_id = sgr.student_id AND stg.guardian_id = sgr.guardian_id
+      WHERE stg.student_id = s.id
+    ),
+    '[]'::jsonb
+  ) AS guardians
 FROM students s
 LEFT JOIN student_process_numbers spn ON s.id = spn.student_id
 LEFT JOIN student_names sn ON s.id = sn.student_id
@@ -471,6 +497,10 @@ LEFT JOIN student_birthdates sb ON s.id = sb.student_id
 LEFT JOIN student_genders sg ON s.id = sg.student_id
 LEFT JOIN student_photo_urls sp ON s.id = sp.student_id
 LEFT JOIN student_extra_infos se ON s.id = se.student_id;
+
+-- ============================================================================
+-- VIEW: LESSONS
+-- ============================================================================
 
 CREATE OR REPLACE VIEW view_lessons AS
 SELECT 
@@ -500,3 +530,84 @@ LEFT JOIN lesson_attention_boxes lab ON l.id = lab.lesson_id
 LEFT JOIN lesson_teacher_notes ltn ON l.id = ltn.lesson_id
 LEFT JOIN lesson_step_by_steps lsbs ON l.id = lsbs.lesson_id
 LEFT JOIN lesson_materials lm ON l.id = lm.lesson_id;
+
+-- ============================================================================
+-- VIEW: GROUPS
+-- ============================================================================
+
+CREATE OR REPLACE VIEW view_groups AS
+SELECT 
+  g.id,
+  gn.name AS name,
+  gla.level_id AS level_id,
+  ln.name AS level_name,
+  CASE 
+    WHEN ln.name IS NOT NULL AND gn.name IS NOT NULL THEN ln.name || ' - ' || gn.name
+    ELSE COALESCE(gn.name, ln.name, g.id::text)
+  END AS display_name
+FROM groups g
+LEFT JOIN group_names gn ON g.id = gn.group_id
+LEFT JOIN group_level_assignments gla ON g.id = gla.group_id
+LEFT JOIN level_names ln ON gla.level_id = ln.level_id
+ORDER BY 
+  ln.name ASC NULLS LAST,
+  gn.name ASC NULLS LAST;
+
+
+-- ============================================================================
+-- VIEW: EVALUATIONS
+-- ============================================================================
+CREATE OR REPLACE VIEW view_evaluations AS
+SELECT 
+  e.id,
+  el.lesson_id,
+  es.student_id,
+  sn.name AS student_name,
+  spn.process_number AS student_process_number,
+  COALESCE(eas.is_attending, true) AS is_attending,
+  esr.student_rating,
+  etr.teacher_rating,
+  en.notes
+FROM evaluations e
+LEFT JOIN evaluation_lessons el ON e.id = el.evaluation_id
+LEFT JOIN evaluation_students es ON e.id = es.evaluation_id
+LEFT JOIN student_names sn ON es.student_id = sn.student_id
+LEFT JOIN student_process_numbers spn ON es.student_id = spn.student_id
+LEFT JOIN evaluation_attending_statuses eas ON e.id = eas.evaluation_id
+LEFT JOIN evaluation_student_ratings esr ON e.id = esr.evaluation_id
+LEFT JOIN evaluation_teacher_ratings etr ON e.id = etr.evaluation_id
+LEFT JOIN evaluation_notes en ON e.id = en.evaluation_id;
+
+-- ============================================================================
+-- VIEW: PLANNING UNITS
+-- ============================================================================
+CREATE OR REPLACE VIEW view_planning_units AS
+SELECT 
+  pu.id,
+  put.theme,
+  pua.activities,
+  pump.manual_pages,
+  purp.resources_physical,
+  purd.resources_digital,
+  puep.exercises_physical,
+  pued.exercises_digital,
+  pur.registers,
+  puay.academic_year_id,
+  pul.level_id,
+  ln.name AS level_name,
+  pug.group_id,
+  gn.name AS group_name
+FROM planning_units pu
+LEFT JOIN planning_unit_themes put ON pu.id = put.planning_unit_id
+LEFT JOIN planning_unit_activities pua ON pu.id = pua.planning_unit_id
+LEFT JOIN planning_unit_manual_pages pump ON pu.id = pump.planning_unit_id
+LEFT JOIN planning_unit_resources_physical purp ON pu.id = purp.planning_unit_id
+LEFT JOIN planning_unit_resources_digital purd ON pu.id = purd.planning_unit_id
+LEFT JOIN planning_unit_exercises_physical puep ON pu.id = puep.planning_unit_id
+LEFT JOIN planning_unit_exercises_digital pued ON pu.id = pued.planning_unit_id
+LEFT JOIN planning_unit_registers pur ON pu.id = pur.planning_unit_id
+LEFT JOIN planning_unit_academic_years puay ON pu.id = puay.planning_unit_id
+LEFT JOIN planning_unit_levels pul ON pu.id = pul.planning_unit_id
+LEFT JOIN level_names ln ON pul.level_id = ln.level_id
+LEFT JOIN planning_unit_groups pug ON pu.id = pug.planning_unit_id
+LEFT JOIN group_names gn ON pug.group_id = gn.group_id;
