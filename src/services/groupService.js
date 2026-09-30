@@ -5,6 +5,8 @@ import { supabase } from '../config/supabase'
  * @property {string} id - Group UUID.
  * @property {string} name - Group/Class identifier (e.g., "Class A").
  * @property {string|null} levelId - Associated level UUID.
+ * @property {string} levelName - Associated level name.
+ * @property {string} displayName - Composite display label.
  */
 
 /**
@@ -12,48 +14,49 @@ import { supabase } from '../config/supabase'
  */
 export const groupService = {
 	/**
-	 * Retrieves all groups with their level assignments.
+	 * Retrieves all groups ordered by level name, then group name.
 	 * @returns {Promise<Group[]>} List of groups.
 	 * @throws {Error} If database fetch fails.
 	 */
 	async getAll() {
-		const { data: groups, error } = await supabase.from('groups').select('id')
+		const { data, error } = await supabase
+			.from('view_groups')
+			.select('*')
+			.order('level_name', { ascending: true, nullsFirst: false })
+			.order('name', { ascending: true, nullsFirst: false })
+
 		if (error) throw new Error(`Failed to fetch groups: ${error.message}`)
 
-		return Promise.all(groups.map((g) => this.getById(g.id)))
+		return data.map((g) => ({
+			id: g.id,
+			name: g.name || '',
+			levelId: g.level_id || null,
+			levelName: g.level_name || '',
+			displayName: g.display_name || g.id
+		}))
 	},
 
 	/**
-	 * Retrieves a single group by ID.
+	 * Retrieves a single group by ID using the view.
 	 * @param {string} id - Group UUID.
 	 * @returns {Promise<Group>} Group object.
 	 * @throws {Error} If record search fails.
 	 */
 	async getById(id) {
-		const [nameRes, levelRes] = await Promise.all([
-			supabase.from('group_names').select('name').eq('group_id', id).single(),
-			supabase.from('group_level_assignments').select('level_id').eq('group_id', id).single()
-		])
+		const { data, error } = await supabase
+			.from('view_groups')
+			.select('*')
+			.eq('id', id)
+			.single()
 
-		let levelName = ''
-		if (levelRes.data?.level_id) {
-			const { data: levelData } = await supabase
-				.from('level_names')
-				.select('name')
-				.eq('level_id', levelRes.data.level_id)
-				.single()
-			levelName = levelData?.name || ''
-		}
-
-		const groupName = nameRes.data?.name || ''
-		const displayName = [levelName, groupName].filter(Boolean).join(' - ') || id
+		if (error) throw new Error(`Failed to fetch group ${id}: ${error.message}`)
 
 		return {
-			id,
-			name: groupName,
-			levelId: levelRes.data?.level_id || null,
-			levelName,
-			displayName
+			id: data.id,
+			name: data.name || '',
+			levelId: data.level_id || null,
+			levelName: data.level_name || '',
+			displayName: data.display_name || data.id
 		}
 	},
 
@@ -78,7 +81,7 @@ export const groupService = {
 			supabase.from('group_level_assignments').insert({ group_id: root.id, level_id: levelId })
 		])
 
-		return { id: root.id, name, levelId }
+		return this.getById(root.id)
 	},
 
 	/**
