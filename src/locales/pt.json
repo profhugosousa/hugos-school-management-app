@@ -110,17 +110,18 @@
     "loading": "A CARREGAR AULAS...",
     "empty": "NENHUMA AULA ENCONTRADA PARA ESTE ANO LETIVO.",
     "columns": {
-      "subject": "Disciplina / Tópico",
-      "group": "Turma / Grupo",
+      "subject": "Disciplina",
+      "group": "Turma",
       "date": "Data",
       "time": "Horário",
       "room": "Sala",
-      "actions": "Ações"
+      "actions": "Ações",
+      "number": "N.º"
     },
     "modal": {
       "createTitle": "Criar Nova Aula",
       "editTitle": "Editar Aula",
-      "subject": "Disciplina / Tópico",
+      "subject": "Disciplina",
       "subjectPlaceholder": "ex. Matemática - Introdução à Álgebra",
       "group": "Turma / Grupo",
       "groupPlaceholder": "ex. 10º Ano - Turma A",
@@ -149,6 +150,20 @@
       "searchPlaceholder": "Pesquisar por disciplina, turma ou sala...",
       "singleMode": "Data Única",
       "rangeMode": "Intervalo de Datas"
+    },
+    "actions": {
+      "studentView": "Vista do Aluno",
+      "delete": "Eliminar",
+      "Edit": "Editar",
+      "export": "Exportar"
+    },
+    "details": {
+      "notes": "Notas do Professor",
+      "materials": "Materiais e Recursos",
+      "stepByStep": "Plano Passo-a-passo",
+      "attention": "Atenção",
+      "noSummary": "Não escreveu sumário.",
+      "summary": "Sumário"
     }
   },
   "subjects": {

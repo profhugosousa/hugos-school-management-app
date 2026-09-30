@@ -114,17 +114,18 @@
     "loading": "LOADING LESSONS...",
     "empty": "NO LESSONS FOUND FOR THIS ACADEMIC YEAR.",
     "columns": {
-      "subject": "Subject / Topic",
+      "subject": "Subject",
       "group": "Class / Group",
       "date": "Date",
       "time": "Time",
       "room": "Room",
-      "actions": "Actions"
+      "actions": "Actions",
+      "number": "No."
     },
     "modal": {
       "createTitle": "Create New Lesson",
       "editTitle": "Edit Lesson",
-      "subject": "Subject / Topic",
+      "subject": "Subject",
       "subjectPlaceholder": "e.g. English",
       "group": "Class / Group",
       "groupPlaceholder": "e.g. 10th Grade - Class A",
@@ -153,6 +154,20 @@
       "searchPlaceholder": "Search by subject, group, or room...",
       "singleMode": "Single Date Mode",
       "rangeMode": "Date Range Mode"
+    },
+    "actions": {
+      "studentView": "Student View",
+      "delete": "Delete",
+      "Edit": "Edit",
+      "export": "Export"
+    },
+    "details": {
+      "notes": "Teacher Notes",
+      "materials": "Materials & Resources",
+      "stepByStep": "Step-by-Step Plan",
+      "attention": "Attention Box",
+      "noSummary": "No summary provided.",
+      "summary": "Summary"
     }
   },
   "subjects": {
