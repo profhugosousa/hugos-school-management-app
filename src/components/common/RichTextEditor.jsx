@@ -102,6 +102,7 @@ export const RichTextEditor = ({ label, value, onChange, placeholder, error }) =
         if (e.key === 'Enter') {
             handleApplyLink(e)
         } else if (e.key === 'Escape') {
+            e.stopPropagation()
             setIsLinkPopoverOpen(false)
         }
     }
