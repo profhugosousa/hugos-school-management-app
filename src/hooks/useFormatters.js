@@ -49,7 +49,7 @@ export const formatLessonNumber = (lessonNumber, t, lang = 'pt') => {
         const secondNum = parseInt(doubleMatch[2], 10)
 
         if (lang === 'pt') {
-            return t('lesson_double', { first: doubleMatch[1], second: doubleMatch[2], defaultValue: `Lições nº ${doubleMatch[1]} e ${doubleMatch[2]}` })
+            return t('lesson_double', { first: doubleMatch[1], second: doubleMatch[2], defaultValue: `Lições n.º ${doubleMatch[1]} e ${doubleMatch[2]}` })
         }
 
         const firstWord = numberToWords(firstNum)
@@ -57,7 +57,7 @@ export const formatLessonNumber = (lessonNumber, t, lang = 'pt') => {
         return t('lesson_double', {
             first: `${doubleMatch[1]} (${firstWord})`,
             second: `${doubleMatch[2]} (${secondWord})`,
-            defaultValue: `Lessons nº ${doubleMatch[1]} (${firstWord}) and ${doubleMatch[2]} (${secondWord})`
+            defaultValue: `Lessons no. ${doubleMatch[1]} (${firstWord}) and ${doubleMatch[2]} (${secondWord})`
         })
     }
 
@@ -65,11 +65,11 @@ export const formatLessonNumber = (lessonNumber, t, lang = 'pt') => {
     const num = match ? parseInt(match[0], 10) : null
 
     if (lang === 'pt' || !num) {
-        return `${t('lesson_single', { defaultValue: 'Lição nº' })} ${str}`
+        return `${t('lesson_single', { defaultValue: 'Lição n.º' })} ${str}`
     }
 
     const word = numberToWords(num)
-    return `${t('lesson_single', { defaultValue: 'Lesson nº' })} ${str} (${word})`
+    return `${t('lesson_single', { defaultValue: 'Lesson no.' })} ${str} (${word})`
 }
 
 export const formatDate = (dateString, lang = 'pt') => {
