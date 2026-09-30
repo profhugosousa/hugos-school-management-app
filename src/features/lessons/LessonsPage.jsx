@@ -22,7 +22,7 @@ export const LessonsPage = () => {
         createLesson,
         updateLesson,
         deleteLesson,
-        exportLessonToGroups
+        exportLesson
     } = useLessons()
 
     const [isFormOpen, setIsFormOpen] = useState(false)
@@ -85,9 +85,9 @@ export const LessonsPage = () => {
         }
     }
 
-    const handleExportSubmit = async (targetGroupIds) => {
+    const handleExportSubmit = async (exportConfig) => {
         if (!exportingLesson) return
-        const success = await exportLessonToGroups(exportingLesson, targetGroupIds)
+        const success = await exportLesson(exportingLesson, exportConfig)
         if (success) {
             setExportingLesson(null)
             setCompleteModalState({ isOpen: true, type: 'update' })
@@ -184,9 +184,12 @@ export const LessonsPage = () => {
                 onClose={() => setStudentViewLesson(null)}
             />
 
+            {/* Fixed: Pass sourceLesson and lessons props */}
             <LessonExportModal
                 isOpen={Boolean(exportingLesson)}
+                sourceLesson={exportingLesson}
                 groups={groups}
+                lessons={lessons}
                 submitting={submitting}
                 onClose={() => setExportingLesson(null)}
                 onExport={handleExportSubmit}

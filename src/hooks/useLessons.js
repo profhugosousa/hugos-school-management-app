@@ -90,26 +90,62 @@ export const useLessons = () => {
         }
     }
 
-    const exportLessonToGroups = async (lesson, targetGroupIds) => {
+    const exportLesson = async (sourceLesson, config) => {
         setSubmitting(true)
         try {
-            await Promise.all(
-                targetGroupIds.map((groupId) =>
-                    lessonService.create({
-                        academicYearId: activeYear?.id || lesson.academic_year_id,
-                        groupId,
-                        subject: lesson.subject,
-                        duration: lesson.duration || '45',
-                        lessonDate: lesson.lesson_date || lesson.lessonDate,
-                        lessonTime: lesson.lesson_time || lesson.lessonTime,
-                        summary: lesson.summary,
-                        attentionBox: lesson.attention_box || lesson.attentionBox,
-                        teacherNotes: lesson.teacher_notes || lesson.teacherNotes,
-                        stepByStep: lesson.step_by_step || lesson.stepByStep,
-                        materials: lesson.materials
+            const { mode, selectedFields, targetGroupIds, targetLessonIds } = config
+
+            if (mode === 'new') {
+                // Clone selected fields into new lesson(s) in chosen group(s)
+                await Promise.all(
+                    targetGroupIds.map((groupId) => {
+                        return lessonService.create({
+                            academicYearId: activeYear?.id || sourceLesson.academic_year_id || sourceLesson.academicYearId,
+                            groupId,
+                            duration: sourceLesson.duration || '45',
+                            lessonDate: sourceLesson.lesson_date || sourceLesson.lessonDate,
+                            lessonTime: sourceLesson.lesson_time || sourceLesson.lessonTime,
+                            subject: selectedFields.subject ? sourceLesson.subject : '',
+                            summary: selectedFields.summary ? (sourceLesson.summary || '') : '',
+                            attentionBox: selectedFields.attentionBox ? (sourceLesson.attention_box || sourceLesson.attentionBox || '') : '',
+                            teacherNotes: selectedFields.teacherNotes ? (sourceLesson.teacher_notes || sourceLesson.teacherNotes || '') : '',
+                            stepByStep: selectedFields.stepByStep ? (sourceLesson.step_by_step || sourceLesson.stepByStep || []) : [],
+                            materials: selectedFields.materials ? (sourceLesson.materials || []) : []
+                        })
                     })
                 )
-            )
+            } else if (mode === 'existing') {
+                // Overwrite/Merge selected fields into existing lesson(s)
+                await Promise.all(
+                    targetLessonIds.map(async (targetId) => {
+                        const existing = lessons.find((l) => l.id === targetId) || (await lessonService.getById(targetId))
+
+                        const payload = {
+                            groupId: existing.group_id || existing.groupId,
+                            duration: existing.duration || '45',
+                            lessonDate: existing.lesson_date || existing.lessonDate,
+                            lessonTime: existing.lesson_time || existing.lessonTime,
+                            subject: selectedFields.subject ? sourceLesson.subject : existing.subject,
+                            summary: selectedFields.summary ? sourceLesson.summary : existing.summary,
+                            attentionBox: selectedFields.attentionBox
+                                ? (sourceLesson.attention_box || sourceLesson.attentionBox)
+                                : (existing.attention_box || existing.attentionBox),
+                            teacherNotes: selectedFields.teacherNotes
+                                ? (sourceLesson.teacher_notes || sourceLesson.teacherNotes)
+                                : (existing.teacher_notes || existing.teacherNotes),
+                            stepByStep: selectedFields.stepByStep
+                                ? (sourceLesson.step_by_step || sourceLesson.stepByStep)
+                                : (existing.step_by_step || existing.stepByStep),
+                            materials: selectedFields.materials
+                                ? sourceLesson.materials
+                                : existing.materials
+                        }
+
+                        return lessonService.update(targetId, payload)
+                    })
+                )
+            }
+
             await fetchData()
             return true
         } catch (err) {
@@ -144,7 +180,7 @@ export const useLessons = () => {
         createLesson,
         updateLesson,
         deleteLesson,
-        exportLessonToGroups,
+        exportLesson,
         refresh: fetchData
     }
 }
