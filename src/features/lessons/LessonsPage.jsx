@@ -1,38 +1,43 @@
 import { AlertCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CompleteModal } from '../../components/common/modals/CompleteModal'
 import { ConfirmModal } from '../../components/common/modals/ConfirmModal'
 import { useLessons } from '../../hooks/useLessons'
-import { LessonFormModal } from './components/LessonFormModal'
-import { LessonHeader } from './components/LessonHeader'
-import { LessonImportModal } from './components/LessonImportModal'
-import { LessonTable } from './components/LessonTable'
+import { LessonExportModal } from '../lessons/components/LessonExportModal'
+import { LessonFilters } from '../lessons/components/LessonFilters'
+import { LessonFormModal } from '../lessons/components/LessonFormModal'
+import { LessonHeader } from '../lessons/components/LessonHeader'
+import { LessonImportModal } from '../lessons/components/LessonImportModal'
+import { LessonStudentViewModal } from '../lessons/components/LessonStudentViewModal'
+import { LessonTable } from '../lessons/components/LessonTable'
 
 export const LessonsPage = () => {
     const {
         lessons,
+        groups,
         loading,
         submitting,
         error,
         activeYear,
         createLesson,
-        importLessons,
         updateLesson,
-        deleteLesson
+        deleteLesson,
+        exportLessonToGroups
     } = useLessons()
 
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isImportOpen, setIsImportOpen] = useState(false)
     const [editingLesson, setEditingLesson] = useState(null)
+    const [studentViewLesson, setStudentViewLesson] = useState(null)
+    const [exportingLesson, setExportingLesson] = useState(null)
     const [pendingFormData, setPendingFormData] = useState(null)
-
     const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false)
     const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+    const [completeModalState, setCompleteModalState] = useState({ isOpen: false, type: 'update' })
 
-    const [completeModalState, setCompleteModalState] = useState({
-        isOpen: false,
-        type: 'update'
-    })
+    const [sortField, setSortField] = useState('date')
+    const [sortDirection, setSortDirection] = useState('asc')
+    const [filters, setFilters] = useState({})
 
     const handleOpenCreate = () => {
         setEditingLesson(null)
@@ -71,14 +76,6 @@ export const LessonsPage = () => {
         }
     }
 
-    const handleImportSubmit = async (importedList) => {
-        const success = await importLessons(importedList)
-        if (success) {
-            setIsImportOpen(false)
-            setCompleteModalState({ isOpen: true, type: 'update' })
-        }
-    }
-
     const handleConfirmDelete = async () => {
         if (!confirmDeleteId) return
         const success = await deleteLesson(confirmDeleteId)
@@ -88,12 +85,62 @@ export const LessonsPage = () => {
         }
     }
 
+    const handleExportSubmit = async (targetGroupIds) => {
+        if (!exportingLesson) return
+        const success = await exportLessonToGroups(exportingLesson, targetGroupIds)
+        if (success) {
+            setExportingLesson(null)
+            setCompleteModalState({ isOpen: true, type: 'update' })
+        }
+    }
+
+    const toggleSort = (field) => {
+        if (sortField === field) {
+            setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'))
+        } else {
+            setSortField(field)
+            setSortDirection('asc')
+        }
+    }
+
+    const processedLessons = useMemo(() => {
+        const filtered = lessons.filter(l => {
+            const searchMatch = !filters.searchTerm || [
+                l.summary, l.attention_box, l.teacher_notes,
+                JSON.stringify(l.step_by_step), JSON.stringify(l.materials)
+            ].some(field => field?.toLowerCase().includes(filters.searchTerm.toLowerCase()))
+
+            const lessonDate = l.lesson_date || l.date
+            const singleDateMatch = !filters.singleDate || lessonDate === filters.singleDate
+            const startMatch = !filters.dateStart || lessonDate >= filters.dateStart
+            const endMatch = !filters.dateEnd || lessonDate <= filters.dateEnd
+            const groupMatch = !filters.groupId || l.group_id === filters.groupId
+            const subjectMatch = !filters.subject || l.subject?.toLowerCase().includes(filters.subject.toLowerCase())
+
+            return searchMatch && singleDateMatch && startMatch && endMatch && groupMatch && subjectMatch
+        })
+
+        return [...filtered].sort((a, b) => {
+            const comparison = sortField === 'number'
+                ? (parseInt(a.lesson_number, 10) || 0) - (parseInt(b.lesson_number, 10) || 0)
+                : `${a.lesson_date || a.date || ''} ${a.lesson_time || ''}`.localeCompare(`${b.lesson_date || b.date || ''} ${b.lesson_time || ''}`)
+
+            return sortDirection === 'asc' ? comparison : -comparison
+        })
+    }, [lessons, filters, sortField, sortDirection])
+
     return (
         <div className="space-y-6">
             <LessonHeader
                 activeYear={activeYear}
                 onAddClick={handleOpenCreate}
                 onImportClick={() => setIsImportOpen(true)}
+            />
+
+            <LessonFilters
+                filters={filters}
+                setFilters={setFilters}
+                groups={groups}
             />
 
             {error && (
@@ -104,15 +151,22 @@ export const LessonsPage = () => {
             )}
 
             <LessonTable
-                lessons={lessons}
+                lessons={processedLessons}
+                groups={groups}
                 loading={loading}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onToggleSort={toggleSort}
                 onEdit={handleOpenEdit}
                 onDelete={(id) => setConfirmDeleteId(id)}
+                onStudentView={(lesson) => setStudentViewLesson(lesson)}
+                onExport={(lesson) => setExportingLesson(lesson)}
             />
 
             <LessonFormModal
                 key={isFormOpen ? (editingLesson?.id || 'new-modal') : 'closed-modal'}
                 isOpen={isFormOpen}
+                groups={groups}
                 submitting={submitting}
                 initialData={editingLesson}
                 onClose={() => setIsFormOpen(false)}
@@ -121,9 +175,21 @@ export const LessonsPage = () => {
 
             <LessonImportModal
                 isOpen={isImportOpen}
-                submitting={submitting}
                 onClose={() => setIsImportOpen(false)}
-                onImport={handleImportSubmit}
+            />
+
+            <LessonStudentViewModal
+                isOpen={Boolean(studentViewLesson)}
+                lesson={studentViewLesson}
+                onClose={() => setStudentViewLesson(null)}
+            />
+
+            <LessonExportModal
+                isOpen={Boolean(exportingLesson)}
+                groups={groups}
+                submitting={submitting}
+                onClose={() => setExportingLesson(null)}
+                onExport={handleExportSubmit}
             />
 
             <ConfirmModal

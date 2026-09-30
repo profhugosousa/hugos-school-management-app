@@ -138,6 +138,20 @@
       "placeholder": "Matemática, Turma A, 2026-10-01, 09:00, 10:30, Sala 101\nFísica, Turma B, 2026-10-01, 11:00, 12:30, Lab 2",
       "cancel": "Cancelar",
       "submit": "Importar Aulas"
+    },
+    "filters": {
+      "title": "Filtrar Aulas",
+      "allSubjects": "Todas as Disciplinas",
+      "allGroups": "Todas as Turmas",
+      "subject": "Disciplina",
+      "group": "Turma",
+      "dateRange": "Intervalo de Datas",
+      "searchPlaceholder": "Pesquisar por disciplina, turma ou sala...",
+      "singleMode": "Data Única",
+      "rangeMode": "Intervalo de Datas"
     }
+  },
+  "subjects": {
+    "english": "English"
   }
 }

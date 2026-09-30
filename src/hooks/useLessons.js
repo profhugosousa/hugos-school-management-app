@@ -1,79 +1,119 @@
 import { useCallback, useEffect, useState } from 'react'
+import { groupService } from '../services/groupService'
 import { lessonService } from '../services/lessonService'
 import { useActiveAcademicYear } from './useActiveAcademicYear'
-import { useNotification } from './useNotification'
 
 export const useLessons = () => {
     const { activeYear } = useActiveAcademicYear()
-    const { showError } = useNotification()
     const [lessons, setLessons] = useState([])
+    const [groups, setGroups] = useState([])
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
+    const [error, setError] = useState(null)
 
-    const activeYearId = activeYear?.id
-
-    const loadLessons = useCallback(async () => {
-        if (!activeYearId) {
-            setLessons([])
-            setLoading(false)
-            return
-        }
-
+    const fetchData = useCallback(async () => {
         try {
-            const data = await lessonService.getByAcademicYear(activeYearId)
-            setLessons(data || [])
+            const [fetchedGroups, fetchedLessons] = await Promise.all([
+                groupService.getAll(),
+                activeYear ? lessonService.getByAcademicYear(activeYear.id) : lessonService.getAll()
+            ])
+            setGroups(fetchedGroups)
+            setLessons(fetchedLessons)
+            setError(null)
         } catch (err) {
-            showError(err.message || 'Failed to load lessons')
+            setError(err.message)
         } finally {
             setLoading(false)
         }
-    }, [activeYearId, showError])
+    }, [activeYear])
 
     useEffect(() => {
-        let ignore = false
+        let isMounted = true
 
-        const fetchInitial = async () => {
-            if (!activeYearId) {
-                setLessons([])
-                setLoading(false)
-                return
-            }
-
+        const loadInitialData = async () => {
             try {
-                const data = await lessonService.getByAcademicYear(activeYearId)
-                if (!ignore) {
-                    setLessons(data || [])
+                const [fetchedGroups, fetchedLessons] = await Promise.all([
+                    groupService.getAll(),
+                    activeYear ? lessonService.getByAcademicYear(activeYear.id) : lessonService.getAll()
+                ])
+                if (isMounted) {
+                    setGroups(fetchedGroups)
+                    setLessons(fetchedLessons)
+                    setError(null)
                 }
             } catch (err) {
-                if (!ignore) {
-                    showError(err.message || 'Failed to load lessons')
+                if (isMounted) {
+                    setError(err.message)
                 }
             } finally {
-                if (!ignore) {
+                if (isMounted) {
                     setLoading(false)
                 }
             }
         }
 
-        fetchInitial()
+        loadInitialData()
 
         return () => {
-            ignore = true
+            isMounted = false
         }
-    }, [activeYearId, showError])
+    }, [activeYear])
 
-    const createLesson = async (payload) => {
-        if (!activeYearId) {
-            showError('Cannot create lesson without an active academic year.')
-            return false
-        }
+    const createLesson = async (formData) => {
+        setSubmitting(true)
         try {
-            setSubmitting(true)
-            await lessonService.create({ ...payload, academicYearId: activeYearId })
-            await loadLessons()
+            await lessonService.create({
+                ...formData,
+                academicYearId: activeYear?.id
+            })
+            await fetchData()
             return true
         } catch (err) {
-            showError(err.message || 'Failed to create lesson')
+            setError(err.message)
+            return false
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    const updateLesson = async (id, formData) => {
+        setSubmitting(true)
+        try {
+            await lessonService.update(id, formData)
+            await fetchData()
+            return true
+        } catch (err) {
+            setError(err.message)
+            return false
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    const exportLessonToGroups = async (lesson, targetGroupIds) => {
+        setSubmitting(true)
+        try {
+            await Promise.all(
+                targetGroupIds.map((groupId) =>
+                    lessonService.create({
+                        academicYearId: activeYear?.id || lesson.academic_year_id,
+                        groupId,
+                        subject: lesson.subject,
+                        duration: lesson.duration || '45',
+                        lessonDate: lesson.lesson_date || lesson.lessonDate,
+                        lessonTime: lesson.lesson_time || lesson.lessonTime,
+                        summary: lesson.summary,
+                        attentionBox: lesson.attention_box || lesson.attentionBox,
+                        teacherNotes: lesson.teacher_notes || lesson.teacherNotes,
+                        stepByStep: lesson.step_by_step || lesson.stepByStep,
+                        materials: lesson.materials
+                    })
+                )
+            )
+            await fetchData()
+            return true
+        } catch (err) {
+            setError(err.message)
             return false
         } finally {
             setSubmitting(false)
@@ -81,13 +121,13 @@ export const useLessons = () => {
     }
 
     const deleteLesson = async (id) => {
+        setSubmitting(true)
         try {
-            setSubmitting(true)
             await lessonService.delete(id)
-            await loadLessons()
+            await fetchData()
             return true
         } catch (err) {
-            showError(err.message || 'Failed to delete lesson')
+            setError(err.message)
             return false
         } finally {
             setSubmitting(false)
@@ -96,11 +136,15 @@ export const useLessons = () => {
 
     return {
         lessons,
+        groups,
         loading,
         submitting,
+        error,
         activeYear,
         createLesson,
+        updateLesson,
         deleteLesson,
-        refresh: loadLessons
+        exportLessonToGroups,
+        refresh: fetchData
     }
 }

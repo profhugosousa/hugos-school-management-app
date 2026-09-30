@@ -142,6 +142,20 @@
       "placeholder": "Mathematics, Class A, 2026-10-01, 09:00, 10:30, Room 101\nPhysics, Class B, 2026-10-01, 11:00, 12:30, Lab 2",
       "cancel": "Cancel",
       "submit": "Import Lessons"
+    },
+    "filters": {
+      "title": "Filter Lessons",
+      "allSubjects": "All Subjects",
+      "allGroups": "All Groups",
+      "subject": "Subject",
+      "group": "Class / Group",
+      "dateRange": "Date Range",
+      "searchPlaceholder": "Search by subject, group, or room...",
+      "singleMode": "Single Date Mode",
+      "rangeMode": "Date Range Mode"
     }
+  },
+  "subjects": {
+    "english": "English"
   }
 }
