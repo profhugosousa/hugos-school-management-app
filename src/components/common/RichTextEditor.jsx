@@ -1,11 +1,30 @@
 import { Bold, Italic, Link as LinkIcon, List, ListOrdered, Strikethrough, Underline } from 'lucide-react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
+
+export const RichText = ({ html, className = '' }) => {
+    if (!html) return null
+
+    return (
+        <div
+            dir="ltr"
+            className={`text-left dir-ltr leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-accent [&_a]:underline [&_b]:font-bold [&_strong]:font-bold ${className}`}
+            dangerouslySetInnerHTML={{ __html: html }}
+        />
+    )
+}
 
 export const RichTextEditor = ({ label, value, onChange, placeholder, error }) => {
     const editorRef = useRef(null)
 
-    const execCommand = (command, value = null) => {
-        document.execCommand(command, false, value)
+    // Only update DOM when value changes externally to avoid resetting caret position while typing
+    useEffect(() => {
+        if (editorRef.current && editorRef.current.innerHTML !== (value || '')) {
+            editorRef.current.innerHTML = value || ''
+        }
+    }, [value])
+
+    const execCommand = (command, val = null) => {
+        document.execCommand(command, false, val)
         if (editorRef.current) {
             onChange(editorRef.current.innerHTML)
         }
@@ -54,14 +73,16 @@ export const RichTextEditor = ({ label, value, onChange, placeholder, error }) =
                 {/* Editable Area */}
                 <div
                     ref={editorRef}
+                    dir="ltr"
                     contentEditable
-                    dangerouslySetInnerHTML={{ __html: value || '' }}
                     onInput={(e) => onChange(e.currentTarget.innerHTML)}
                     data-placeholder={placeholder}
-                    className="p-3 min-h-[100px] max-h-[250px] overflow-y-auto text-xs font-mono text-content focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-muted/50 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-accent [&_a]:underline"
+                    className="text-left dir-ltr p-3 min-h-[100px] max-h-[250px] overflow-y-auto text-xs font-mono text-content focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-muted/50 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-accent [&_a]:underline"
                 />
             </div>
             {error && <p className="text-[10px] font-mono text-red-500 mt-1">{error}</p>}
         </div>
     )
 }
+
+export default RichTextEditor
