@@ -18,7 +18,7 @@
     "toggle_theme": "Alternar Tema"
   },
   "auth": {
-    "gateway": "SGE // AUTENTICATION",
+    "gateway": "SGE // AUTENTICAÇÃO",
     "adminAccess": "Acesso Admin",
     "subtitle": "Autentique as suas credenciais para aceder à consola de gestão.",
     "emailLabel": "Endereço de E-mail",
@@ -37,7 +37,7 @@
     "language": "Idioma",
     "initializing": "A INICIALIZAR O SISTEMA...",
     "logout": "Sair",
-    "viewNotImplemented": "view not implemented",
+    "viewNotImplemented": "vista não implementada",
     "modals": {
       "confirmDeletionTitle": "Confirmar Eliminação",
       "confirmDeletionDesc": "Tem a certeza de que pretende eliminar este item? Esta ação não pode ser desfeita.",
@@ -52,7 +52,15 @@
       "delete": "Eliminar",
       "update": "Atualizar",
       "close": "Fechar"
-    }
+    },
+    "cancel": "Cancelar",
+    "saving": "A guardar...",
+    "update": "Atualizar",
+    "create": "Criar"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "subtitle": "Sistema operacional. Pronto para gerir as funcionalidades."
   },
   "academicYears": {
     "title": "Anos Letivos",
@@ -167,6 +175,31 @@
     }
   },
   "subjects": {
-    "english": "English"
+    "english": "Inglês"
+  },
+  "groups": {
+    "title": "Turmas e Grupos",
+    "subtitle": "Gerir grupos de alunos e atribuições de níveis académicos.",
+    "loading": "A CARREGAR TURMAS...",
+    "empty": "Nenhuma turma encontrada.",
+    "actions": {
+      "add": "Nova Turma",
+      "edit": "Editar Turma",
+      "delete": "Eliminar Turma"
+    },
+    "columns": {
+      "level": "Nível",
+      "name": "Nome da Turma",
+      "displayName": "Designação",
+      "actions": "Ações"
+    },
+    "form": {
+      "nameLabel": "Identificador da Turma",
+      "namePlaceholder": "ex. Turma A ou 10.º A",
+      "selectLevel": "Selecione um nível",
+      "levelLabel": "Nível Académico",
+      "editTitle": "Editar Turma",
+      "createTitle": "Criar Nova Turma"
+    }
   }
 }

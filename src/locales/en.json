@@ -52,7 +52,11 @@
       "delete": "Delete",
       "update": "Update",
       "close": "Close"
-    }
+    },
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "update": "Update",
+    "create": "Create"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -172,5 +176,30 @@
   },
   "subjects": {
     "english": "English"
+  },
+  "groups": {
+    "title": "Groups & Classes",
+    "subtitle": "Manage student groups and academic level assignments.",
+    "loading": "LOADING GROUPS...",
+    "empty": "No groups found.",
+    "actions": {
+      "add": "New Group",
+      "edit": "Edit Group",
+      "delete": "Delete Group"
+    },
+    "columns": {
+      "level": "Level",
+      "name": "Group Name",
+      "displayName": "Display Label",
+      "actions": "Actions"
+    },
+    "form": {
+      "nameLabel": "Class Identifier",
+      "namePlaceholder": "e.g. Class A or 10º A",
+      "selectLevel": "Select a level",
+      "levelLabel": "Academic Level",
+      "editTitle": "Edit Group",
+      "createTitle": "Create New Group"
+    }
   }
 }
