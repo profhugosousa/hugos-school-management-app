@@ -65,7 +65,7 @@
   "academicYears": {
     "title": "Academic Years",
     "subtitle": "Manage school academic calendar terms, dates, and active status.",
-    "add": "Add Academic Year",
+    "add": "New Academic Year",
     "loading": "LOADING ACADEMIC YEARS...",
     "empty": "NO ACADEMIC YEARS FOUND. CLICK \"ADD ACADEMIC YEAR\" TO CREATE ONE.",
     "columns": {
