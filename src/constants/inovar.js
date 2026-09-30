@@ -1,0 +1,1 @@
+export const INOVAR = "https://aedonamaria.inovarmais.com/Alunos/Inicial.wgx"
