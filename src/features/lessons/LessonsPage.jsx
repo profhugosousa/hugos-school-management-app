@@ -132,8 +132,9 @@ export const LessonsPage = () => {
     return (
         <div className="space-y-6">
             <LessonHeader
+                count={processedLessons.length}
                 activeYear={activeYear}
-                onAddClick={handleOpenCreate}
+                onAddLesson={handleOpenCreate}
                 onImportClick={() => setIsImportOpen(true)}
             />
 

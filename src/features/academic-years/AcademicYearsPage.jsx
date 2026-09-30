@@ -84,7 +84,7 @@ export const AcademicYearsPage = () => {
 
     return (
         <div className="space-y-6">
-            <AcademicYearHeader onAddClick={handleOpenCreate} />
+            <AcademicYearHeader count={years.length} onAddYear={handleOpenCreate} />
 
             {error && (
                 <div className="p-4 border border-red-500/50 bg-red-500/10 text-red-500 font-mono text-xs flex items-center gap-2">
