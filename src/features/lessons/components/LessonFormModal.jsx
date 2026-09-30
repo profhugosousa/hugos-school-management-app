@@ -10,6 +10,7 @@ import { SUBJECTS } from '../../../constants/subjects'
 export const LessonFormModal = ({ isOpen, onClose, onSubmit, initialData, groups = [], submitting }) => {
     const { t } = useTranslation()
     const date = new Date()
+    const groupMap = new Map(groups.map(g => [g.id, g.displayName || g.name || g.id]))
 
 
     const [formData, setFormData] = useState({
@@ -56,7 +57,7 @@ export const LessonFormModal = ({ isOpen, onClose, onSubmit, initialData, groups
                             <option value="">{t('lessons.modal.selectGroup', 'Select Group')}</option>
                             {groups.map((group) => (
                                 <option key={group.id} value={group.id}>
-                                    {group.name || group.id}
+                                    {groupMap.get(group.id) || group.name || group.id}
                                 </option>
                             ))}
                         </Select>

@@ -51,7 +51,7 @@ export const LessonTable = ({
                         <th className="p-3.5 w-10"></th>
                         <th className="p-3.5 cursor-pointer hover:text-content" onClick={() => onToggleSort('number')}>
                             <span className="inline-flex items-center gap-1">
-                                {t('lessons.columns.number', 'Nº')}
+                                {t('lessons.columns.number', 'No.')}
                                 <ArrowUpDown className={`w-3 h-3 ${sortField === 'number' ? 'text-accent' : ''}`} />
                                 {sortField === 'number' && <span className="text-[10px]">{sortDirection.toUpperCase()}</span>}
                             </span>
@@ -98,7 +98,7 @@ export const LessonTable = ({
                                     <td className="p-3.5 text-muted">
                                         <span className="inline-flex items-center gap-1">
                                             <Clock className="w-3 h-3 text-muted" />
-                                            {lesson.lesson_time || '—'} ({lesson.duration || '50'}m)
+                                            {lesson.lesson_time || '—'} ({lesson.duration || '45'}m)
                                         </span>
                                     </td>
                                 </tr>

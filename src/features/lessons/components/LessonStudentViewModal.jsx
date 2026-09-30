@@ -56,12 +56,12 @@ export const LessonStudentViewModal = ({ isOpen, onClose, lesson }) => {
 
                 {lesson.attention_box && (
                     <div className="w-full max-w-3xl p-6 bg-yellow-500/10 border-l-4 border-yellow-500 rounded-r-lg space-y-2">
-                        <h2 className="text-xl font-bold text-yellow-600 dark:text-yellow-400 text-left">
+                        <h2 className="text-xl font-bold text-orange-400 dark:text-yellow-600 text-left">
                             {t('attention', { defaultValue: 'Attention' })}
                         </h2>
                         <RichText
                             html={lesson.attention_box}
-                            className="text-lg text-yellow-700 dark:text-yellow-300 text-left"
+                            className="text-lg text-left"
                         />
                     </div>
                 )}
