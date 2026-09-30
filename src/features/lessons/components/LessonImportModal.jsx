@@ -1,7 +1,7 @@
 import { AlertCircle, FileText, Loader2, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useEscapeKey } from '../../hooks/useEscapeKey'
+import { useEscapeKey } from '../../../hooks/useEscapeKey'
 
 export const LessonImportModal = ({ isOpen, onClose, onImport, submitting }) => {
     const { t } = useTranslation()

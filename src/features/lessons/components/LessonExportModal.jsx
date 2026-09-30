@@ -2,7 +2,7 @@ import { Loader2, Share, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../../components/ui/Button'
-import { useEscapeKey } from '../../hooks/useEscapeKey'
+import { useEscapeKey } from '../../../hooks/useEscapeKey'
 
 
 export const LessonExportModal = ({ isOpen, onClose, onExport, groups = [], submitting }) => {

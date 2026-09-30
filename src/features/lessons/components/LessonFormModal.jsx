@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
 import { SUBJECTS } from '../../../constants/subjects'
-import { useEscapeKey } from '../../hooks/useEscapeKey'
+import { useEscapeKey } from '../../../hooks/useEscapeKey'
 
 
 export const LessonFormModal = ({ isOpen, onClose, onSubmit, initialData, groups = [], submitting }) => {
