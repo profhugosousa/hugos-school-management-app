@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
+// --- Pure Helper Functions ---
+
 const numberToWords = (n) => {
     const ones = [
         'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
@@ -23,7 +25,11 @@ const numberToWords = (n) => {
 }
 
 const ordinalNumberToWords = (n) => {
-    const ones = ['zeroth', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth']
+    const ones = [
+        'zeroth', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
+        'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth',
+        'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth'
+    ]
     const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
     const tensOrdinal = ['', '', 'twentieth', 'thirtieth', 'fortieth', 'fiftieth', 'sixtieth', 'seventieth', 'eightieth', 'ninetieth']
 
@@ -39,6 +45,50 @@ const getOrdinal = (n) => {
     return s[(v - 20) % 10] || s[v] || s[0]
 }
 
+// --- Content & HTML Formatters ---
+
+/**
+ * Checks whether a value (string, array, object, primitive) contains meaningful content.
+ */
+export const hasContent = (val) => {
+    if (val === null || val === undefined) return false
+    if (typeof val === 'string') {
+        return Boolean(val.replace(/<[^>]*>/g, '').trim())
+    }
+    if (Array.isArray(val)) {
+        return val.length > 0 && val.some((item) => hasContent(item))
+    }
+    if (typeof val === 'object') {
+        return Object.keys(val).length > 0
+    }
+    return Boolean(val)
+}
+
+/**
+ * Normalizes strings, arrays, or objects into valid HTML markup for RichText or direct rendering.
+ */
+export const formatHtmlContent = (val) => {
+    if (!val) return ''
+    if (typeof val === 'string') return val
+    if (Array.isArray(val)) {
+        const listItems = val
+            .map((item) => {
+                const text = typeof item === 'object'
+                    ? (item.text || item.title || item.name || JSON.stringify(item))
+                    : String(item)
+                return `<li>${text}</li>`
+            })
+            .join('')
+        return `<ul>${listItems}</ul>`
+    }
+    if (typeof val === 'object') {
+        return `<pre>${JSON.stringify(val, null, 2)}</pre>`
+    }
+    return String(val)
+}
+
+// --- Locale-Aware Formatters ---
+
 export const formatLessonNumber = (lessonNumber, t, lang = 'pt') => {
     if (!lessonNumber) return ''
     const str = String(lessonNumber).trim()
@@ -49,7 +99,11 @@ export const formatLessonNumber = (lessonNumber, t, lang = 'pt') => {
         const secondNum = parseInt(doubleMatch[2], 10)
 
         if (lang === 'pt') {
-            return t('lesson_double', { first: doubleMatch[1], second: doubleMatch[2], defaultValue: `Lições n.º ${doubleMatch[1]} e ${doubleMatch[2]}` })
+            return t('lesson_double', {
+                first: doubleMatch[1],
+                second: doubleMatch[2],
+                defaultValue: `Lições n.º ${doubleMatch[1]} e ${doubleMatch[2]}`
+            })
         }
 
         const firstWord = numberToWords(firstNum)
@@ -92,6 +146,8 @@ export const formatDate = (dateString, lang = 'pt') => {
     }
 }
 
+// --- Main Custom Hook ---
+
 export const useFormatters = () => {
     const { t, i18n } = useTranslation()
     const lang = i18n?.language || 'pt'
@@ -99,6 +155,8 @@ export const useFormatters = () => {
     return {
         formatLessonNumber: (lessonNumber) => formatLessonNumber(lessonNumber, t, lang),
         formatDate: (dateString) => formatDate(dateString, lang),
+        hasContent,
+        formatHtmlContent,
         t,
         lang
     }
