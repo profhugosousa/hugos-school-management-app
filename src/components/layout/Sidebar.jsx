@@ -11,7 +11,8 @@ export const Sidebar = ({ currentView = 'academic-years', onViewChange }) => {
         { id: 'lessons', label: t('nav.lessons'), icon: BookOpen },
         { id: 'planning', label: t('nav.planning'), icon: Calendar },
         { id: 'evaluations', label: t('nav.evaluations'), icon: GraduationCap },
-        { id: 'academic-years', label: t('nav.academicYears'), icon: CalendarDays }
+        { id: 'academic-years', label: t('nav.academicYears'), icon: CalendarDays },
+        { id: 'groups', label: t('nav.groups', 'Groups & Classes'), icon: Users, path: '/groups' }
     ]
 
     const handleNavClick = (id) => {
