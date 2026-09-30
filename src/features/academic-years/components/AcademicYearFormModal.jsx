@@ -1,6 +1,7 @@
 import { Loader2, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useEscapeKey } from '../../../hooks/useEscapeKey'
 
 export const AcademicYearFormModal = ({ isOpen, onClose, onSubmit, initialData, submitting }) => {
     const { t } = useTranslation()
@@ -11,6 +12,8 @@ export const AcademicYearFormModal = ({ isOpen, onClose, onSubmit, initialData, 
         endDate: initialData?.endDate || '',
         isActive: initialData?.isActive || false
     })
+
+    useEscapeKey(onClose, isOpen)
 
     if (!isOpen) return null
 

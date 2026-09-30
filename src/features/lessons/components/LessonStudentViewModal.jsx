@@ -1,19 +1,13 @@
 import { X } from 'lucide-react'
-import { useEffect } from 'react'
 import { RichText } from '../../../components/common/RichTextEditor'
+import { useEscapeKey } from '../../../hooks/useEscapeKey'
 import { useFormatters } from '../../../hooks/useFormatters'
 
 export const LessonStudentViewModal = ({ isOpen, onClose, lesson }) => {
     const formatters = useFormatters()
     const { formatLessonNumber, formatDate, t } = formatters
 
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') onClose()
-        }
-        window.addEventListener('keydown', handleKeyDown)
-        return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [onClose])
+    useEscapeKey(onClose, isOpen)
 
     if (!isOpen || !lesson) return null
 

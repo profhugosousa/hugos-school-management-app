@@ -1,8 +1,12 @@
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useEscapeKey } from '../../../hooks/useEscapeKey'
+
 
 export const AcademicYearDeleteModal = ({ isOpen, onClose, onConfirm, submitting }) => {
     const { t } = useTranslation()
+
+    useEscapeKey(onClose, isOpen)
 
     if (!isOpen) return null
 

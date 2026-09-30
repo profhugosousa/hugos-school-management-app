@@ -1,5 +1,6 @@
 import { CheckCircle2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import useEscapeKey from '../../../hooks/useEscapeKey'
 
 export const CompleteModal = ({
     isOpen,
@@ -9,6 +10,8 @@ export const CompleteModal = ({
     description
 }) => {
     const { t } = useTranslation()
+
+    useEscapeKey(onClose, isOpen)
 
     if (!isOpen) return null
 
