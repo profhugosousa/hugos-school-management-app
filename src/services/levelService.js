@@ -12,22 +12,19 @@ import { supabase } from '../config/supabase'
 export const levelService = {
 	/**
 	 * Retrieves all academic levels.
-	 * @returns {Promise<Level[]>} Array of level objects.
 	 * @throws {Error} If database fetch fails.
 	 */
 	async getAll() {
-		const { data: levels, error } = await supabase.from('levels').select('id')
+		const { data, error } = await supabase
+			.from('level_names')
+			.select('level_id, name')
+			.order('name', { ascending: true })
 		if (error) throw new Error(`Failed to fetch levels: ${error.message}`)
 
-		return Promise.all(
-			levels.map(async (l) => {
-				const { data } = await supabase
-					.from('level_names')
-					.select('name')
-					.eq('level_id', l.id)
-					.single()
-				return { id: l.id, name: data?.name || '' }
-			})
+		return (data || []).map((l) => ({
+			id: l.level_id,
+			name: l.name || ''
+		})
 		)
 	},
 

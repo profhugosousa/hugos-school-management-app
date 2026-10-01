@@ -15,7 +15,6 @@ import { supabase } from '../config/supabase'
 export const groupService = {
 	/**
 	 * Retrieves all groups ordered by level name, then group name.
-	 * @returns {Promise<Group[]>} List of groups.
 	 * @throws {Error} If database fetch fails.
 	 */
 	async getAll() {
