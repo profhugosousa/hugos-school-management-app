@@ -11,22 +11,16 @@ export const LessonHeader = ({ activeYear, count, onAddClick, onImportClick }) =
             {t('lessons.subtitle', 'Manage and plan your class lessons')}{' '}
             <span
                 className="
-                    inline-flex items-center gap-1.5
-                    rounded-xl
-                    border border-white/25
-                    bg-gradient-to-br from-white/20 to-white/5
-                    px-3 py-1.5
-                    font-mono text-xs font-medium
-                    text-accent
-                    shadow-[0_8px_30px_rgb(0,0,0,0.08)]
-                    ring-1 ring-inset ring-white/10
-                    backdrop-blur-xl
-                    backdrop-saturate-150
-                    transition-colors
-                    hover:bg-white/20
-                    dark:border-white/10
-                    dark:from-white/10
-                    dark:to-white/[0.02]
+                    inline-flex items-center
+                    rounded-lg
+                    border border-line/70
+                    bg-content/[0.06]
+                    px-2.5 py-1
+                    font-mono text-xs
+                    text-content
+                    shadow-inner
+                    backdrop-blur-sm
+                    dark:bg-content/[0.08]
                 "
             >
                 {activeYear.label || activeYear.name}
