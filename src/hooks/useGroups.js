@@ -13,7 +13,7 @@ export const useGroups = () => {
     const [groups, setGroups] = useState([])
     const [levels, setLevels] = useState([])
     const [loading, setLoading] = useState(true)
-    const { showNotification } = useNotification()
+    const { showSuccess, showError } = useNotification()
 
     const fetchAllData = useCallback(async () => {
         const [groupsData, levelsData] = await Promise.all([
@@ -39,11 +39,11 @@ export const useGroups = () => {
             setGroups(g)
             setLevels(l)
         } catch (err) {
-            showNotification(err.message || 'Error refreshing groups', 'error')
+            showError(err.message || 'Error refreshing groups')
         }
-    }, [fetchAllData, showNotification])
+    }, [fetchAllData, showError])
 
-    // Initial async data load on mount
+    // Initial async load on component mount
     useEffect(() => {
         let isMounted = true
 
@@ -56,7 +56,7 @@ export const useGroups = () => {
                 }
             } catch (err) {
                 if (isMounted) {
-                    showNotification(err.message || 'Error loading groups', 'error')
+                    showError(err.message || 'Error loading groups')
                 }
             } finally {
                 if (isMounted) {
@@ -70,16 +70,16 @@ export const useGroups = () => {
         return () => {
             isMounted = false
         }
-    }, [fetchAllData, showNotification])
+    }, [fetchAllData, showError])
 
     const createGroup = async (name, levelId) => {
         try {
             await groupService.create(name, levelId)
-            showNotification('Group created successfully', 'success')
+            showSuccess('Group created successfully')
             await refresh()
             return true
         } catch (err) {
-            showNotification(err.message || 'Failed to create group', 'error')
+            showError(err.message || 'Failed to create group')
             return false
         }
     }
@@ -87,11 +87,11 @@ export const useGroups = () => {
     const updateGroup = async (id, { name, levelId }) => {
         try {
             await groupService.update(id, { name, levelId })
-            showNotification('Group updated successfully', 'success')
+            showSuccess('Group updated successfully')
             await refresh()
             return true
         } catch (err) {
-            showNotification(err.message || 'Failed to update group', 'error')
+            showError(err.message || 'Failed to update group')
             return false
         }
     }
@@ -99,11 +99,11 @@ export const useGroups = () => {
     const deleteGroup = async (id) => {
         try {
             await groupService.delete(id)
-            showNotification('Group deleted successfully', 'success')
+            showSuccess('Group deleted successfully')
             await refresh()
             return true
         } catch (err) {
-            showNotification(err.message || 'Failed to delete group', 'error')
+            showError(err.message || 'Failed to delete group')
             return false
         }
     }
