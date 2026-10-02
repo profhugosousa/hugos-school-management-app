@@ -10,6 +10,7 @@ import { AcademicYearsPage } from './features/academic-years/AcademicYearsPage'
 import { LoginPage } from './features/auth/LoginPage'
 import { GroupsPage } from './features/groups/GroupsPage'
 import { LessonsPage } from './features/lessons/LessonsPage'
+import { StudentsPage } from './features/students/StudentsPage'
 import { useAuth } from './hooks/useAuth'
 
 const AppContent = () => {
@@ -37,6 +38,8 @@ const AppContent = () => {
         return <LessonsPage />
       case 'groups':
         return <GroupsPage />
+      case 'students':
+        return <StudentsPage />
       default:
         return (
           <div className="p-6 border border-line bg-main font-mono text-xs text-muted uppercase">
