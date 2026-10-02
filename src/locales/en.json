@@ -201,5 +201,48 @@
       "editTitle": "Edit Group",
       "createTitle": "Create New Group"
     }
+  },
+  "students": {
+    "contacts": {
+      "studentEmail": "Student School Email",
+      "guardiansAndContacts": "Guardians & Contacts",
+      "sendEmail": "Send email",
+      "noGuardians": "No guardians registered.",
+      "call": "Call",
+      "whatsapp": "WhatsApp message"
+    },
+    "badges": {
+      "senTitle": "Special Educational Needs (SEN / NEE)",
+      "senRequired": "Active SEN / NEE Support Required",
+      "likesTitle": "Interests & Likes",
+      "dislikesTitle": "Dislikes & Triggers",
+      "valuesTitle": "Personal Values"
+    },
+    "radar": {
+      "title": "Evaluation Radar (Self vs Teacher)",
+      "noData": "Not enough evaluation data available to display radar chart.",
+      "selfRating": "Self Rating",
+      "teacherRating": "Teacher Rating",
+      "attendance": "Attendance",
+      "studentLegend": "Student Self-Eval",
+      "teacherLegend": "Teacher Rating"
+    },
+    "incidents": {
+      "title": "Student Incident & Praise Log",
+      "addIncident": "Log Incident",
+      "noIncidents": "No recorded incidents for this student.",
+      "type": "Type",
+      "date": "Date",
+      "description": "Description / Notes",
+      "save": "Save Record",
+      "cancel": "Cancel",
+      "placeholder": "Describe the incident or praise...",
+      "types": {
+        "praise": "Praise / Merit",
+        "pedagogical": "Pedagogical Note",
+        "behavioral": "Behavioral",
+        "warning": "Warning / Sanction"
+      }
+    }
   }
 }

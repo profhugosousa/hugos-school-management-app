@@ -201,5 +201,48 @@
       "editTitle": "Editar Turma",
       "createTitle": "Criar Nova Turma"
     }
+  },
+  "students": {
+    "contacts": {
+      "studentEmail": "Email Institucional do Aluno",
+      "guardiansAndContacts": "Encarregados de Educação & Contactos",
+      "sendEmail": "Enviar email",
+      "noGuardians": "Nenhum encarregado de educação registado.",
+      "call": "Ligar para",
+      "whatsapp": "Mensagem por WhatsApp"
+    },
+    "badges": {
+      "senTitle": "Necessidades Educativas Especiais (NEE / SEN)",
+      "senRequired": "Apoio NEE / SEN Ativo",
+      "likesTitle": "Gostos e Interesses",
+      "dislikesTitle": "Fatores de Desmotivação",
+      "valuesTitle": "Valores Pessoais"
+    },
+    "radar": {
+      "title": "Radar de Avaliação (Autoavaliação vs Professor)",
+      "noData": "Sem dados suficientes para gerar o gráfico de avaliação.",
+      "selfRating": "Autoavaliação",
+      "teacherRating": "Avaliação Professor",
+      "attendance": "Assiduidade",
+      "studentLegend": "Autoavaliação",
+      "teacherLegend": "Professor"
+    },
+    "incidents": {
+      "title": "Ocorrências & Elogios Pedagógicos",
+      "addIncident": "Nova Ocorrência",
+      "noIncidents": "Sem registo de ocorrências para este aluno.",
+      "type": "Tipo",
+      "date": "Data",
+      "description": "Descrição / Observações",
+      "save": "Guardar Registo",
+      "cancel": "Cancelar",
+      "placeholder": "Descreva a ocorrência ou o elogio...",
+      "types": {
+        "praise": "Elogio / Mérito",
+        "pedagogical": "Nota Pedagógica",
+        "behavioral": "Comportamento",
+        "warning": "Aviso / Advertência"
+      }
+    }
   }
 }
