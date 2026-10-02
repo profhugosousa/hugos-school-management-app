@@ -60,6 +60,9 @@ CREATE TABLE group_level_assignments (
 
 CREATE TYPE student_gender_enum AS ENUM ('male', 'female', 'undefined');
 
+CREATE TYPE incident_type_enum AS ENUM ('praise', 'pedagogical', 'behavioral', 'warning');
+
+
 CREATE TABLE students (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid()
 );
@@ -119,6 +122,39 @@ CREATE TABLE enrolment_academic_years (
 CREATE TABLE enrolment_group_numbers (
   enrolment_id UUID PRIMARY KEY REFERENCES student_enrolments(id) ON DELETE CASCADE,
   group_number INT NOT NULL
+);
+
+-- ============================================================================
+-- STUDENT INCIDENTS & PRAISES (6NF)
+-- ============================================================================
+
+CREATE TABLE student_incidents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+);
+
+CREATE TABLE incident_students (
+  incident_id UUID PRIMARY KEY REFERENCES student_incidents(id) ON DELETE CASCADE,
+  student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE
+);
+
+CREATE TABLE incident_academic_years (
+  incident_id UUID PRIMARY KEY REFERENCES student_incidents(id) ON DELETE CASCADE,
+  academic_year_id UUID NOT NULL REFERENCES academic_years(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE incident_dates (
+  incident_id UUID PRIMARY KEY REFERENCES student_incidents(id) ON DELETE CASCADE,
+  incident_date DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+CREATE TABLE incident_types (
+  incident_id UUID PRIMARY KEY REFERENCES student_incidents(id) ON DELETE CASCADE,
+  incident_type incident_type_enum NOT NULL DEFAULT 'pedagogical'
+);
+
+CREATE TABLE incident_descriptions (
+  incident_id UUID PRIMARY KEY REFERENCES student_incidents(id) ON DELETE CASCADE,
+  description TEXT NOT NULL
 );
 
 -- ============================================================================
@@ -611,3 +647,21 @@ LEFT JOIN planning_unit_levels pul ON pu.id = pul.planning_unit_id
 LEFT JOIN level_names ln ON pul.level_id = ln.level_id
 LEFT JOIN planning_unit_groups pug ON pu.id = pug.planning_unit_id
 LEFT JOIN group_names gn ON pug.group_id = gn.group_id;
+
+
+-- Convenience View for Incident Records
+CREATE OR REPLACE VIEW view_student_incidents AS
+SELECT 
+  i.id,
+  ist.student_id,
+  iay.academic_year_id,
+  idat.incident_date,
+  ityp.incident_type,
+  idesc.description
+FROM student_incidents i
+JOIN incident_students ist ON i.id = ist.incident_id
+JOIN incident_academic_years iay ON i.id = iay.incident_id
+JOIN incident_dates idat ON i.id = idat.incident_id
+JOIN incident_types ityp ON i.id = ityp.incident_id
+JOIN incident_descriptions idesc ON i.id = idesc.incident_id
+ORDER BY idat.incident_date DESC;
