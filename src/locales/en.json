@@ -243,6 +243,73 @@
         "behavioral": "Behavioral",
         "warning": "Warning / Sanction"
       }
-    }
+    },
+    "header": {
+      "title": "Student Directory",
+      "subtitle": "Manage student records, contacts, and evaluations",
+      "searchPlaceholder": "Search by name or process number...",
+      "allGroups": "All Groups",
+      "addStudent": "Add Student",
+      "import": "Import from CSV",
+      "export": "Export to CSV"
+    },
+    "table": {
+      "photo": "Photo",
+      "number": "No.",
+      "process": "Process #",
+      "name": "Name",
+      "group": "Group",
+      "actions": "Actions",
+      "empty": "No students found."
+    },
+    "form": {
+      "addTitle": "Register New Student",
+      "editTitle": "Edit Student",
+      "nameLabel": "Full Name",
+      "numberLabel": "Call Number",
+      "processLabel": "Process Number",
+      "senLabel": "Special Educational Needs (SEN)",
+      "senDetailsLabel": "SEN Details",
+      "likesLabel": "Likes / Interests (comma-separated)",
+      "dislikesLabel": "Dislikes / Triggers (comma-separated)",
+      "valuesLabel": "Personal Values (comma-separated)",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "deleteModal": {
+      "title": "Delete Student",
+      "confirmation": "Are you sure you want to delete student {{name}}? This action cannot be undone.",
+      "confirm": "Yes, Delete",
+      "cancel": "Cancel"
+    },
+    "actions": {
+      "edit": "Edit Student",
+      "delete": "Delete Student"
+    },
+    "bulkImport": {
+      "title": "Bulk Import Students (CSV)",
+      "selectFile": "Click to select CSV file",
+      "acceptedColumns": "Accepted columns",
+      "preview": "File Preview",
+      "photo": "Photo",
+      "number": "No.",
+      "processNumber": "Process #",
+      "name": "Name",
+      "groupYear": "Group / Academic Year",
+      "guardian": "Guardian",
+      "guardianContact": "Guardian Contact",
+      "duplicateAlert": "Duplicate records detected",
+      "duplicateDesc": "Some process numbers in the CSV file already exist in the database. Choose how you want to proceed:",
+      "existingProcessNumber": "Existing Process #",
+      "existingName": "Current Name in DB",
+      "actionPrompt": "Action for duplicate records:",
+      "skipTitle": "Skip Duplicates",
+      "skipDesc": "Import only new students and leave existing records untouched.",
+      "updateTitle": "Update Existing",
+      "updateDesc": "Update existing student records with the information from the CSV.",
+      "confirm": "Import Records",
+      "execute": "Confirm & Process"
+    },
+    "importSummary": "Import completed: {{importedCount}} created, {{updatedCount}} updated, {{skippedCount}} skipped."
   }
 }

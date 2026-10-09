@@ -243,6 +243,71 @@
         "behavioral": "Comportamento",
         "warning": "Aviso / Advertência"
       }
-    }
+    },
+    "header": {
+      "title": "Gestão de Alunos",
+      "subtitle": "Gerir registos, contactos e avaliações dos alunos",
+      "searchPlaceholder": "Pesquisar por nome ou n.º de processo...",
+      "allGroups": "Todas as Turmas",
+      "addStudent": "Adicionar Aluno",
+      "import": "Importar de CSV",
+      "export": "Exportar para CSV"
+    },
+    "table": {
+      "process": "N.º Processo",
+      "name": "Nome do Aluno",
+      "group": "Turma",
+      "actions": "Ações",
+      "empty": "Nenhum aluno encontrado."
+    },
+    "form": {
+      "addTitle": "Registar Novo Aluno",
+      "editTitle": "Editar Aluno",
+      "nameLabel": "Nome Completo",
+      "numberLabel": "N.º Chamada",
+      "processLabel": "N.º Processo",
+      "senLabel": "Necessidades Educativas Especiais (NEE)",
+      "senDetailsLabel": "Detalhes NEE",
+      "likesLabel": "Gostos / Interesses (separados por vírgula)",
+      "dislikesLabel": "Desgostos / Fatores de Desmotivação (separados por vírgula)",
+      "valuesLabel": "Valores Pessoais (separados por vírgula)",
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "deleteModal": {
+      "title": "Eliminar Aluno",
+      "confirmation": "Tem a certeza que pretende eliminar o aluno {{name}}? Esta ação é irreversível.",
+      "confirm": "Sim, Eliminar",
+      "cancel": "Cancelar"
+    },
+    "actions": {
+      "edit": "Editar Aluno",
+      "delete": "Eliminar Aluno"
+    },
+    "bulkImport": {
+      "title": "Importar Alunos em Massa (CSV)",
+      "selectFile": "Clique para selecionar ficheiro CSV",
+      "acceptedColumns": "Colunas aceites",
+      "preview": "Pré-visualização do Ficheiro",
+      "photo": "Foto",
+      "number": "Nº",
+      "processNumber": "# Proc",
+      "name": "Nome",
+      "groupYear": "Turma / Ano Letivo",
+      "guardian": "Encarregado",
+      "guardianContact": "Contacto EE",
+      "duplicateAlert": "Foram detetados registos duplicados",
+      "duplicateDesc": "Alguns números de processo do ficheiro CSV já existem na base de dados. Escolha como pretende proceder:",
+      "existingProcessNumber": "# Proc Existente",
+      "existingName": "Nome Atual na BD",
+      "actionPrompt": "Ação para registos duplicados:",
+      "skipTitle": "Ignorar Duplicados",
+      "skipDesc": "Importa apenas os alunos novos e mantém os existentes intocados.",
+      "updateTitle": "Atualizar Existentes",
+      "updateDesc": "Atualiza os dados dos alunos existentes com a informação do CSV.",
+      "confirm": "Importar Registos",
+      "execute": "Confirmar e Processar"
+    },
+    "importSummary": "Importação concluída: {{importedCount}} criados, {{updatedCount}} atualizados, {{skippedCount}} ignorados."
   }
 }
