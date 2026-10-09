@@ -488,6 +488,71 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================================================
+-- Function that recalculate lesson numbers for a specific group by date ASC
+-- ============================================================================
+
+-- 1. Create function to recalculate lesson numbers for a specific group
+CREATE OR REPLACE FUNCTION recalculate_group_lesson_numbers(p_group_id UUID)
+RETURNS VOID AS $$
+DECLARE
+    r RECORD;
+    current_num INT := 1;
+    slots INT;
+    new_num_str TEXT;
+BEGIN
+    IF p_group_id IS NULL THEN
+        RETURN;
+    END IF;
+
+    -- Iterate through all lessons for this group ordered chronologically by date and time
+    FOR r IN
+        SELECT 
+            l.id AS lesson_id,
+            COALESCE(ldur.duration, '50') AS duration
+        FROM lessons l
+        JOIN lesson_groups lg ON lg.lesson_id = l.id
+        JOIN lesson_dates ld ON ld.lesson_id = l.id
+        LEFT JOIN lesson_times lt ON lt.lesson_id = l.id
+        LEFT JOIN lesson_durations ldur ON ldur.lesson_id = l.id
+        WHERE lg.group_id = p_group_id
+        ORDER BY ld.lesson_date ASC, COALESCE(lt.lesson_time, '00:00') ASC, l.id ASC
+    LOOP
+        -- Calculate how many lesson slots this session occupies
+        IF r.duration IN ('90', '100') THEN
+            slots := 2;
+            new_num_str := current_num::text || ' e ' || (current_num + 1)::text;
+        ELSE
+            slots := 1;
+            new_num_str := current_num::text;
+        END IF;
+
+        -- Upsert corrected lesson_number
+        INSERT INTO lesson_numbers (lesson_id, lesson_number)
+        VALUES (r.lesson_id, new_num_str)
+        ON CONFLICT (lesson_id)
+        DO UPDATE SET lesson_number = EXCLUDED.lesson_number;
+
+        current_num := current_num + slots;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Create helper function to recalculate all groups across the entire database
+CREATE OR REPLACE FUNCTION recalculate_all_lesson_numbers()
+RETURNS VOID AS $$
+DECLARE
+    g RECORD;
+BEGIN
+    FOR g IN SELECT DISTINCT group_id FROM lesson_groups LOOP
+        PERFORM recalculate_group_lesson_numbers(g.group_id);
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. Run immediately to fix and sync all current lesson numbers
+SELECT recalculate_all_lesson_numbers();
+
+-- ============================================================================
 -- CONVENIENCE READ VIEWS (FLATTENS 6NF FOR APPLICATION SERVICE LAYERS)
 -- ============================================================================
 
