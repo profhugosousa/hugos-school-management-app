@@ -1,5 +1,7 @@
 import { Loader2 } from 'lucide-react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import StudentDetailCard from './StudentDetailCard'
 import StudentTableRow from './StudentTableRow'
 
 export default function StudentTable({
@@ -43,16 +45,30 @@ export default function StudentTable({
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
-                    {students.map((student) => (
-                        <StudentTableRow
-                            key={student.id}
-                            student={student}
-                            isSelected={selectedStudentId === student.id}
-                            onSelect={onSelect}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                        />
-                    ))}
+                    {students.map((student) => {
+                        const isSelected = selectedStudentId === student.id
+                        return (
+                            <React.Fragment key={student.id}>
+                                <StudentTableRow
+                                    student={student}
+                                    isSelected={isSelected}
+                                    onSelect={onSelect}
+                                    onEdit={onEdit}
+                                    onDelete={onDelete}
+                                />
+                                {isSelected && (
+                                    <tr className="lg:hidden bg-content/5 border-b border-line">
+                                        <td colSpan={6} className="p-2 sm:p-4">
+                                            <StudentDetailCard
+                                                student={student}
+                                                onClose={() => onSelect(null)}
+                                            />
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
+                        )
+                    })}
                 </tbody>
             </table>
         </div>

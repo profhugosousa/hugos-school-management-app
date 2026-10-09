@@ -6,17 +6,12 @@ import { useActiveAcademicYear } from '../../hooks/useActiveAcademicYear'
 import { useNotification } from '../../hooks/useNotification'
 import { useStudents } from '../../hooks/useStudents'
 
-
 import StudentBulkImportModal from './components/StudentBulkImportModal'
 import StudentDeleteModal from './components/StudentDeleteModal'
+import StudentDetailCard from './components/StudentDetailCard'
 import StudentFormModal from './components/StudentFormModal'
 import StudentHeader from './components/StudentHeader'
 import StudentTable from './components/StudentTable'
-
-import { StudentBadges } from './components/badges'
-import { StudentProgressChart } from './components/progressEvaluationChart'
-import { StudentQuickActions } from './components/quickAction'
-import { StudentIncidentLog } from './components/StudentIncidentLog'
 import { exportStudentsToCSV } from './utils/studentCsvUtils'
 
 export function StudentsPage() {
@@ -65,27 +60,31 @@ export function StudentsPage() {
         })
 
         return filtered.sort((a, b) => {
-            // 1. Level Name
             const levelA = a.level_name || a.levelName || ''
             const levelB = b.level_name || b.levelName || ''
             const levelCmp = levelA.localeCompare(levelB, undefined, { numeric: true, sensitivity: 'base' })
             if (levelCmp !== 0) return levelCmp
 
-            // 2. Group Name
             const groupA = a.group_name || a.display_name || a.groupId || ''
             const groupB = b.group_name || b.display_name || b.groupId || ''
             const groupCmp = groupA.localeCompare(groupB, undefined, { numeric: true, sensitivity: 'base' })
             if (groupCmp !== 0) return groupCmp
 
-            // 3. Call Number (#)
             const numA = a.groupNumber ?? a.number ?? Infinity
             const numB = b.groupNumber ?? b.number ?? Infinity
             if (numA !== numB) return numA - numB
 
-            // 4. Student Name
             return (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' })
         })
     }, [students, searchTerm, selectedGroup])
+
+    const handleSelectStudent = (student) => {
+        if (!student) {
+            setActiveDetailStudent(null)
+            return
+        }
+        setActiveDetailStudent((prev) => (prev?.id === student.id ? null : student))
+    }
 
     const handleOpenCreate = () => {
         setSelectedStudent(null)
@@ -124,11 +123,10 @@ export function StudentsPage() {
 
     const handleImportCompleted = async (stats) => {
         showSuccess(
-            t('students.importSummary', {
+            t('students.importSummary', 'Importação concluída: {{importedCount}} criados, {{updatedCount}} atualizados, {{skippedCount}} ignorados.', {
                 importedCount: stats.importedCount,
                 updatedCount: stats.updatedCount,
-                skippedCount: stats.skippedCount,
-                defaultValue: `Importação concluída: ${stats.importedCount} criados, ${stats.updatedCount} atualizados, ${stats.skippedCount} ignorados.`,
+                skippedCount: stats.skippedCount
             })
         )
         await refetch()
@@ -150,41 +148,24 @@ export function StudentsPage() {
                 onExportClick={() => exportStudentsToCSV(filteredAndSortedStudents)}
             />
 
-            <div className={`grid gap - 6 transition - all ${activeDetailStudent ? 'lg:grid-cols-3' : 'grid-cols-1'}`}>
+            <div className={`grid gap-6 transition-all ${activeDetailStudent ? 'lg:grid-cols-3' : 'grid-cols-1'}`}>
                 <div className={activeDetailStudent ? 'lg:col-span-2' : 'w-full'}>
                     <StudentTable
                         students={filteredAndSortedStudents}
                         loading={loading}
                         onEdit={handleOpenEdit}
                         onDelete={handleOpenDelete}
-                        onSelect={setActiveDetailStudent}
+                        onSelect={handleSelectStudent}
                         selectedStudentId={activeDetailStudent?.id}
                     />
                 </div>
 
                 {activeDetailStudent && (
-                    <div className="space-y-4 bg-main p-4 border border-line">
-                        <div className="flex items-center justify-between pb-3 border-b border-line">
-                            <div>
-                                <h3 className="text-sm font-bold uppercase text-content">
-                                    {activeDetailStudent.name}
-                                </h3>
-                                <p className="text-xs text-accent font-bold">
-                                    #{activeDetailStudent.process_number || activeDetailStudent.number}
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => setActiveDetailStudent(null)}
-                                className="p-1 text-muted hover:text-content cursor-pointer"
-                            >
-                                ✕
-                            </button>
-                        </div>
-
-                        <StudentQuickActions student={activeDetailStudent} />
-                        <StudentBadges extraInfo={activeDetailStudent.extra_info} />
-                        <StudentProgressChart evaluations={activeDetailStudent.evaluations || []} />
-                        <StudentIncidentLog incidents={activeDetailStudent.incidents || []} />
+                    <div className="hidden lg:block lg:col-span-1 sticky top-6 self-start">
+                        <StudentDetailCard
+                            student={activeDetailStudent}
+                            onClose={() => setActiveDetailStudent(null)}
+                        />
                     </div>
                 )}
             </div>
