@@ -79,7 +79,7 @@ export default function StudentHeader({
                             <option value="">{t('students.header.allGroups')}</option>
                             {groups.map((group) => (
                                 <option key={group.id} value={group.id}>
-                                    {group.displayName}
+                                    {group.displayName || group.display_name || group.name}
                                 </option>
                             ))}
                         </Select>

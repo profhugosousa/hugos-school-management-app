@@ -1,8 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActiveYearWarningBanner } from '../../components/common/ActiveYearWarningBanner'
+import { supabase } from '../../config/supabase'
 import { useActiveAcademicYear } from '../../hooks/useActiveAcademicYear'
 import { useNotification } from '../../hooks/useNotification'
 import { useStudents } from '../../hooks/useStudents'
+
 
 import StudentBulkImportModal from './components/StudentBulkImportModal'
 import StudentDeleteModal from './components/StudentDeleteModal'
@@ -17,6 +20,7 @@ import { StudentIncidentLog } from './components/StudentIncidentLog'
 import { exportStudentsToCSV } from './utils/studentCsvUtils'
 
 export function StudentsPage() {
+    const { t } = useTranslation()
     const { activeYear } = useActiveAcademicYear()
     const { showSuccess } = useNotification()
     const { students, loading, refetch, createStudent, updateStudent, deleteStudent } =
@@ -24,12 +28,26 @@ export function StudentsPage() {
 
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedGroup, setSelectedGroup] = useState('')
+    const [groups, setGroups] = useState([])
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [isImportOpen, setIsImportOpen] = useState(false)
 
     const [selectedStudent, setSelectedStudent] = useState(null)
     const [activeDetailStudent, setActiveDetailStudent] = useState(null)
+
+    // Load available groups for the dropdown filter
+    useEffect(() => {
+        const fetchGroups = async () => {
+            const { data, error } = await supabase
+                .from('view_groups')
+                .select('*')
+            if (!error && data) {
+                setGroups(data)
+            }
+        }
+        fetchGroups()
+    }, [])
 
     // Filter and sort by Level -> Group -> Call Number (#) -> Name
     const filteredAndSortedStudents = useMemo(() => {
@@ -106,7 +124,12 @@ export function StudentsPage() {
 
     const handleImportCompleted = async (stats) => {
         showSuccess(
-            `Importação concluída: ${stats.importedCount} criados, ${stats.updatedCount} atualizados, ${stats.skippedCount} ignorados.`
+            t('students.importSummary', {
+                importedCount: stats.importedCount,
+                updatedCount: stats.updatedCount,
+                skippedCount: stats.skippedCount,
+                defaultValue: `Importação concluída: ${stats.importedCount} criados, ${stats.updatedCount} atualizados, ${stats.skippedCount} ignorados.`,
+            })
         )
         await refetch()
     }
@@ -121,12 +144,13 @@ export function StudentsPage() {
                 onSearchChange={setSearchTerm}
                 selectedGroup={selectedGroup}
                 onGroupChange={setSelectedGroup}
+                groups={groups}
                 onAddClick={handleOpenCreate}
                 onImportClick={() => setIsImportOpen(true)}
                 onExportClick={() => exportStudentsToCSV(filteredAndSortedStudents)}
             />
 
-            <div className={`grid gap-6 transition-all ${activeDetailStudent ? 'lg:grid-cols-3' : 'grid-cols-1'}`}>
+            <div className={`grid gap - 6 transition - all ${activeDetailStudent ? 'lg:grid-cols-3' : 'grid-cols-1'}`}>
                 <div className={activeDetailStudent ? 'lg:col-span-2' : 'w-full'}>
                     <StudentTable
                         students={filteredAndSortedStudents}
