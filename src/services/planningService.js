@@ -4,20 +4,20 @@ import { supabase } from '../config/supabase'
  * @typedef {Object} PlanningUnit
  * @property {string} id - Planning Unit UUID.
  * @property {string} theme - Main topic/theme.
- * @property {string} activities - Activity details.
- * @property {string} manualPages - Textbook or manual page numbers.
- * @property {string} resourcesPhysical - Physical resources needed.
- * @property {string} resourcesDigital - Digital resources or URLs.
- * @property {string} exercisesPhysical - Printed exercise details.
- * @property {string} exercisesDigital - Online exercise links or IDs.
- * @property {string} registers - Attendance or evaluation records.
+ * @property {string} activities - Activity details (HTML).
+ * @property {string} manualPages - Textbook or manual page numbers (HTML).
+ * @property {string} resourcesPhysical - Physical resources needed (HTML).
+ * @property {string} resourcesDigital - Digital resources or URLs (HTML).
+ * @property {string} exercisesPhysical - Printed exercise details (HTML).
+ * @property {string} exercisesDigital - Online exercise links or IDs (HTML).
+ * @property {string} registers - Attendance or evaluation records (HTML).
  * @property {string|null} academicYearId - Associated academic year UUID.
  * @property {string|null} levelId - Associated level UUID.
  * @property {string|null} groupId - Associated group UUID.
  */
 
 /**
- * Service managing curriculum planning units.
+ * Service managing curriculum planning units across decomposed 6NF tables.
  */
 export const planningService = {
 	/**
@@ -28,8 +28,28 @@ export const planningService = {
 	async getAll() {
 		const { data: units, error } = await supabase.from('planning_units').select('id')
 		if (error) throw new Error(`Failed to fetch planning units: ${error.message}`)
+		if (!units || !units.length) return []
 
 		return Promise.all(units.map((u) => this.getById(u.id)))
+	},
+
+	/**
+	 * Retrieves planning units filtered by academic year.
+	 * @param {string} academicYearId - Target Academic Year UUID.
+	 * @returns {Promise<PlanningUnit[]>} List of matching planning units.
+	 */
+	async getByAcademicYear(academicYearId) {
+		if (!academicYearId) return this.getAll()
+
+		const { data, error } = await supabase
+			.from('planning_unit_academic_years')
+			.select('planning_unit_id')
+			.eq('academic_year_id', academicYearId)
+
+		if (error) throw new Error(`Failed to fetch academic year planning units: ${error.message}`)
+		if (!data || !data.length) return []
+
+		return Promise.all(data.map((u) => this.getById(u.planning_unit_id)))
 	},
 
 	/**
@@ -41,17 +61,17 @@ export const planningService = {
 	async getById(id) {
 		const [theme, activities, manual, resPhys, resDig, exPhys, exDig, reg, ay, level, group] =
 			await Promise.all([
-				supabase.from('planning_unit_themes').select('theme').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_activities').select('activities').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_manual_pages').select('manual_pages').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_resources_physical').select('resources_physical').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_resources_digital').select('resources_digital').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_exercises_physical').select('exercises_physical').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_exercises_digital').select('exercises_digital').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_registers').select('registers').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_academic_years').select('academic_year_id').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_levels').select('level_id').eq('planning_unit_id', id).single(),
-				supabase.from('planning_unit_groups').select('group_id').eq('planning_unit_id', id).single()
+				supabase.from('planning_unit_themes').select('theme').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_activities').select('activities').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_manual_pages').select('manual_pages').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_resources_physical').select('resources_physical').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_resources_digital').select('resources_digital').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_exercises_physical').select('exercises_physical').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_exercises_digital').select('exercises_digital').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_registers').select('registers').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_academic_years').select('academic_year_id').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_levels').select('level_id').eq('planning_unit_id', id).maybeSingle(),
+				supabase.from('planning_unit_groups').select('group_id').eq('planning_unit_id', id).maybeSingle()
 			])
 
 		return {
@@ -130,9 +150,21 @@ export const planningService = {
 		if (updates.exercisesPhysical !== undefined) tasks.push(supabase.from('planning_unit_exercises_physical').upsert({ planning_unit_id: id, exercises_physical: updates.exercisesPhysical }))
 		if (updates.exercisesDigital !== undefined) tasks.push(supabase.from('planning_unit_exercises_digital').upsert({ planning_unit_id: id, exercises_digital: updates.exercisesDigital }))
 		if (updates.registers !== undefined) tasks.push(supabase.from('planning_unit_registers').upsert({ planning_unit_id: id, registers: updates.registers }))
-		if (updates.academicYearId !== undefined) tasks.push(supabase.from('planning_unit_academic_years').upsert({ planning_unit_id: id, academic_year_id: updates.academicYearId }))
-		if (updates.levelId !== undefined) tasks.push(supabase.from('planning_unit_levels').upsert({ planning_unit_id: id, level_id: updates.levelId }))
-		if (updates.groupId !== undefined) tasks.push(supabase.from('planning_unit_groups').upsert({ planning_unit_id: id, group_id: updates.groupId }))
+
+		// Scope joins cleanup and re-insert
+		if (updates.levelId !== undefined || updates.groupId !== undefined) {
+			await Promise.all([
+				supabase.from('planning_unit_levels').delete().eq('planning_unit_id', id),
+				supabase.from('planning_unit_groups').delete().eq('planning_unit_id', id)
+			])
+
+			if (updates.levelId) tasks.push(supabase.from('planning_unit_levels').insert({ planning_unit_id: id, level_id: updates.levelId }))
+			if (updates.groupId) tasks.push(supabase.from('planning_unit_groups').insert({ planning_unit_id: id, group_id: updates.groupId }))
+		}
+
+		if (updates.academicYearId !== undefined) {
+			tasks.push(supabase.from('planning_unit_academic_years').upsert({ planning_unit_id: id, academic_year_id: updates.academicYearId }))
+		}
 
 		const results = await Promise.all(tasks)
 		const failed = results.find((r) => r.error)
