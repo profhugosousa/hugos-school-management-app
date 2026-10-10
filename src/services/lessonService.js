@@ -17,14 +17,7 @@ const normalizePayload = (payload = {}) => ({
 	materials: payload.materials || [],
 });
 
-
-/**
- * Service handling Lesson domain operations and auto-numbering.
- */
 export const lessonService = {
-	/**
-	 * Fetch all lessons via flattened view.
-	 */
 	async getAll() {
 		const { data, error } = await supabase
 			.from("view_lessons")
@@ -36,26 +29,6 @@ export const lessonService = {
 		return data;
 	},
 
-	/**
-	 * Automatically calculate next lesson number for a group and duration.
-	 * @param {string} groupId - Group UUID.
-	 * @param {('45'|'50'|'90'|'100')} duration - Lesson duration enum.
-	 * @returns {Promise<string>} Next lesson string (e.g. "13" or "13 e 14").
-	 */
-	async getNextLessonNumber(groupId, duration) {
-		const { data, error } = await supabase.rpc("get_next_lesson_number", {
-			p_group_id: groupId,
-			p_duration: duration,
-		});
-
-		if (error)
-			throw new Error(`Failed to compute next lesson number: ${error.message}`);
-		return data;
-	},
-
-	/**
- * Fetch single lesson by ID.
- */
 	async getById(lessonId) {
 		const { data, error } = await supabase
 			.from("view_lessons")
@@ -67,9 +40,6 @@ export const lessonService = {
 		return data;
 	},
 
-	/**
-	 * Fetch lessons filtered by academic year.
-	 */
 	async getByAcademicYear(academicYearId) {
 		const { data, error } = await supabase
 			.from("view_lessons")
@@ -83,18 +53,25 @@ export const lessonService = {
 	},
 
 	/**
-	 * Create new lesson in architecture.
+	 * Calls PostgreSQL RPC function to recalculate lesson numbers for a group.
 	 */
-	async create(rawPayload) {
+	async recalculateGroupLessonNumbers(groupId) {
+		if (!groupId) return;
+		const { error } = await supabase.rpc("recalculate_group_lesson_numbers", {
+			p_group_id: groupId,
+		});
 
+		if (error) {
+			throw new Error(`Failed to recalculate lesson numbers: ${error.message}`);
+		}
+	},
+
+	async create(rawPayload) {
 		const payload = normalizePayload(rawPayload);
 
 		if (!payload.groupId) {
 			throw new Error("Failed creating lesson: Group ID is required.");
 		}
-
-		// Calculate sequential lesson number automatically
-		const lessonNumber = await this.getNextLessonNumber(payload.groupId, payload.duration);
 
 		// Insert root entity
 		const { data: root, error: rootError } = await supabase
@@ -103,67 +80,50 @@ export const lessonService = {
 			.select("id")
 			.single();
 
-		if (rootError)
-			throw new Error(`Failed to create lesson root: ${rootError.message}`);
+		if (rootError) throw new Error(`Failed to create lesson root: ${rootError.message}`);
 		const lessonId = root.id;
 
 		// Write into attribute tables
 		const payloads = [
-			supabase
-				.from("lesson_academic_years")
-				.insert({ lesson_id: lessonId, academic_year_id: payload.academicYearId }),
-			supabase
-				.from("lesson_groups")
-				.insert({ lesson_id: lessonId, group_id: payload.groupId }),
-			supabase
-				.from("lesson_subjects")
-				.insert({ lesson_id: lessonId, subject: payload.subject }),
-			supabase
-				.from("lesson_durations")
-				.insert({ lesson_id: lessonId, duration: payload.duration }),
-			supabase
-				.from("lesson_numbers")
-				.insert({ lesson_id: lessonId, lesson_number: lessonNumber }),
-			supabase
-				.from("lesson_dates")
-				.insert({ lesson_id: lessonId, lesson_date: payload.lessonDate }),
-			supabase
-				.from("lesson_times")
-				.insert({ lesson_id: lessonId, lesson_time: payload.lessonTime }),
-			supabase
-				.from("lesson_summaries")
-				.insert({ lesson_id: lessonId, summary: payload.summary }),
-			supabase
-				.from("lesson_attention_boxes")
-				.insert({ lesson_id: lessonId, attention_box: payload.attentionBox }),
-			supabase
-				.from("lesson_teacher_notes")
-				.insert({ lesson_id: lessonId, teacher_notes: payload.teacherNotes }),
-			supabase
-				.from("lesson_step_by_steps")
-				.insert({ lesson_id: lessonId, step_by_step: payload.stepByStep }),
-			supabase
-				.from("lesson_materials")
-				.insert({ lesson_id: lessonId, materials: payload.materials }),
+			supabase.from("lesson_academic_years").insert({ lesson_id: lessonId, academic_year_id: payload.academicYearId }),
+			supabase.from("lesson_groups").insert({ lesson_id: lessonId, group_id: payload.groupId }),
+			supabase.from("lesson_subjects").insert({ lesson_id: lessonId, subject: payload.subject }),
+			supabase.from("lesson_durations").insert({ lesson_id: lessonId, duration: payload.duration }),
+			supabase.from("lesson_dates").insert({ lesson_id: lessonId, lesson_date: payload.lessonDate }),
+			supabase.from("lesson_times").insert({ lesson_id: lessonId, lesson_time: payload.lessonTime }),
+			supabase.from("lesson_summaries").insert({ lesson_id: lessonId, summary: payload.summary }),
+			supabase.from("lesson_attention_boxes").insert({ lesson_id: lessonId, attention_box: payload.attentionBox }),
+			supabase.from("lesson_teacher_notes").insert({ lesson_id: lessonId, teacher_notes: payload.teacherNotes }),
+			supabase.from("lesson_step_by_steps").insert({ lesson_id: lessonId, step_by_step: payload.stepByStep }),
+			supabase.from("lesson_materials").insert({ lesson_id: lessonId, materials: payload.materials }),
 		];
 
 		const results = await Promise.all(payloads);
 		const failed = results.find((r) => r.error);
-		if (failed)
-			throw new Error(
-				`Failed inserting lesson attributes: ${failed.error.message}`,
-			);
+		if (failed) throw new Error(`Failed inserting lesson attributes: ${failed.error.message}`);
+
+		// Automatically recalculate and sync sequential numbers for this group
+		await this.recalculateGroupLessonNumbers(payload.groupId);
 
 		return this.getById(lessonId);
 	},
 
 	async update(id, rawPayload) {
-
 		const payload = normalizePayload(rawPayload);
 
 		if (!payload.groupId) {
-			throw new Error("Failed creating lesson: Group ID is required.");
+			throw new Error("Failed updating lesson: Group ID is required.");
 		}
+
+		// Fetch existing group to handle potential group changes
+		const { data: oldGroupRel } = await supabase
+			.from("lesson_groups")
+			.select("group_id")
+			.eq("lesson_id", id)
+			.maybeSingle();
+
+		const oldGroupId = oldGroupRel?.group_id;
+
 		const payloads = [
 			supabase.from("lesson_groups").upsert({ lesson_id: id, group_id: payload.groupId }, { onConflict: "lesson_id" }),
 			supabase.from("lesson_subjects").upsert({ lesson_id: id, subject: payload.subject }, { onConflict: "lesson_id" }),
@@ -179,24 +139,41 @@ export const lessonService = {
 
 		const results = await Promise.all(payloads);
 		const failed = results.find((r) => r.error);
-		if (failed)
-			throw new Error(
-				`Failed updating lesson attributes: ${failed.error.message}`,
-			);
+		if (failed) throw new Error(`Failed updating lesson attributes: ${failed.error.message}`);
+
+		// Recalculate current group
+		await this.recalculateGroupLessonNumbers(payload.groupId);
+
+		// Recalculate previous group if lesson was reassigned
+		if (oldGroupId && oldGroupId !== payload.groupId) {
+			await this.recalculateGroupLessonNumbers(oldGroupId);
+		}
 
 		return this.getById(id);
 	},
 
-
-	/**
-	 * Delete lesson entity (Cascades attribute tables).
-	 */
 	async delete(lessonId) {
+		// Fetch group_id before deletion
+		const { data: lessonGroup } = await supabase
+			.from("lesson_groups")
+			.select("group_id")
+			.eq("lesson_id", lessonId)
+			.maybeSingle();
+
+		const groupId = lessonGroup?.group_id;
+
 		const { error } = await supabase
 			.from("lessons")
 			.delete()
 			.eq("id", lessonId);
+
 		if (error) throw new Error(`Failed to delete lesson: ${error.message}`);
+
+		// Automatically recalculate remaining lessons for the group
+		if (groupId) {
+			await this.recalculateGroupLessonNumbers(groupId);
+		}
+
 		return true;
 	},
 };
