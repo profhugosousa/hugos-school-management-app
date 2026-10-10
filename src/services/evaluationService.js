@@ -26,7 +26,6 @@ export const evaluationService = {
 	 * Retrieves all student evaluation records associated with a specific lesson.
 	 * @param {string} lessonId - Target lesson UUID.
 	 * @returns {Promise<Evaluation[]>} List of evaluations for the given lesson.
-	 * @throws {Error} If database fetch fails.
 	 */
 	async getByLesson(lessonId) {
 		const { data: lessonEvals, error } = await supabase
@@ -44,7 +43,6 @@ export const evaluationService = {
 	 * Retrieves an evaluation record by ID.
 	 * @param {string} id - Evaluation UUID.
 	 * @returns {Promise<Evaluation>} Evaluation object.
-	 * @throws {Error} If fetch fails.
 	 */
 	async getById(id) {
 		const [lesson, student, attending, sRating, tRating, notes] = await Promise.all([
@@ -64,6 +62,29 @@ export const evaluationService = {
 			studentRating: sRating.data?.student_rating || null,
 			teacherRating: tRating.data?.teacher_rating || null,
 			notes: notes.data?.notes || ''
+		}
+	},
+
+	/**
+	 * Fetches all evaluations joined with lessons, groups, and levels for reporting.
+	 */
+	async getAnalyticsData() {
+		const [evalsRes, lessonsRes, groupsRes, studentsRes] = await Promise.all([
+			supabase.from('view_evaluations').select('*'),
+			supabase.from('view_lessons').select('*'),
+			supabase.from('view_groups').select('*'),
+			supabase.from('view_students').select('*')
+		])
+
+		if (evalsRes.error) throw new Error(`Failed fetching evaluations: ${evalsRes.error.message}`)
+		if (lessonsRes.error) throw new Error(`Failed fetching lessons: ${lessonsRes.error.message}`)
+		if (groupsRes.error) throw new Error(`Failed fetching groups: ${groupsRes.error.message}`)
+
+		return {
+			evaluations: evalsRes.data || [],
+			lessons: lessonsRes.data || [],
+			groups: groupsRes.data || [],
+			students: studentsRes.data || []
 		}
 	},
 
