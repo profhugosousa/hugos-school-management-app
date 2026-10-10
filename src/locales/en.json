@@ -51,6 +51,7 @@
       "confirm": "Confirm",
       "delete": "Delete",
       "update": "Update",
+      "save": "Save",
       "close": "Close"
     },
     "cancel": "Cancel",
@@ -348,5 +349,103 @@
       "execute": "Confirm & Process"
     },
     "importSummary": "Import completed: {{importedCount}} created, {{updatedCount}} updated, {{skippedCount}} skipped."
+  },
+  "planning": {
+    "header": {
+      "title": "Planning Units",
+      "subtitle": "Manage topics, resources, and curricular activities ({{count}} records)",
+      "addBtn": "New Unit"
+    },
+    "filters": {
+      "search": "Search topic, activities, manual pages...",
+      "allLevels": "All Years / Levels",
+      "allGroups": "All Groups"
+    },
+    "columns": {
+      "theme": "Topic / Unit",
+      "scope": "Scope / Target",
+      "manual": "Manual / Pages",
+      "actions": "Actions"
+    },
+    "scope": {
+      "global": "Global / Academic Year",
+      "level": "Specific Year / Level",
+      "group": "Specific Group"
+    },
+    "details": {
+      "activities": "Activities",
+      "registers": "Notes & Registers",
+      "resPhysical": "Physical Res.",
+      "resDigital": "Digital Res.",
+      "exPhysical": "Physical Ex.",
+      "exDigital": "Digital Ex."
+    },
+    "form": {
+      "createTitle": "New Planning Unit",
+      "editTitle": "Edit Planning Unit",
+      "theme": "Topic / Unit Name *",
+      "scopeType": "Target Scope",
+      "levelSelect": "Select Level *",
+      "groupSelect": "Select Group *",
+      "manualPages": "Manual / Pages",
+      "activities": "Activities & Tasks",
+      "resPhysical": "Physical Resources",
+      "resDigital": "Digital Resources",
+      "exPhysical": "Physical Exercises",
+      "exDigital": "Digital Exercises",
+      "registers": "Notes / Registers"
+    },
+    "empty": "No planning units found."
+  },
+  "evaluations": {
+    "analytics": {
+      "title": "Evaluations & Trends Analytics",
+      "subtitle": "Qualitative evolution comparing student self-evaluations vs. teacher assessment",
+      "searchPlaceholder": "Search student, process no., notes...",
+      "allLevels": "All Levels",
+      "allGroups": "All Groups",
+      "allStudents": "All Students",
+      "switchToSingleDate": "Filter by single date",
+      "switchToRangeDate": "Filter by date range",
+      "chartTitle": "Evaluation Timeline Evolution",
+      "studentLine": "Self-Evaluation (Student)",
+      "teacherLine": "Teacher",
+      "noChartData": "Not enough data to display trend chart.",
+      "date": "Date",
+      "filterTitle": "Filter Evaluations",
+      "singleMode": "Single Date",
+      "rangeMode": "Date Range",
+      "searchLabel": "Search",
+      "levelLabel": "Level",
+      "groupLabel": "Group",
+      "studentLabel": "Student",
+      "singleDateLabel": "Lesson Date",
+      "rangeDateLabel": "Date Range"
+    },
+    "kpi": {
+      "studentAvg": "Student Avg",
+      "studentAvgDesc": "Student perception",
+      "teacherAvg": "Teacher Avg",
+      "teacherAvgDesc": "Pedagogical assessment",
+      "alignmentGap": "Alignment Index",
+      "alignmentDesc": "Gap (Teacher - Student)",
+      "attendance": "Attendance Rate",
+      "attendanceDesc": "Present vs. Absent"
+    },
+    "tabs": {
+      "students": "By Student",
+      "groups": "By Group",
+      "levels": "By Level"
+    },
+    "table": {
+      "student": "Student",
+      "group": "Group",
+      "level": "Level / Year",
+      "studentAvg": "Self-Evaluation",
+      "teacherAvg": "Teacher Rating",
+      "delta": "Perception / Gap",
+      "attendance": "Attendance",
+      "evalCount": "Total Records"
+    }
   }
 }

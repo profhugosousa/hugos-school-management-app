@@ -51,6 +51,7 @@
       "confirm": "Confirmar",
       "delete": "Eliminar",
       "update": "Atualizar",
+      "save": "Gurardar",
       "close": "Fechar"
     },
     "cancel": "Cancelar",
@@ -346,5 +347,103 @@
       "execute": "Confirmar e Processar"
     },
     "importSummary": "Importação concluída: {{importedCount}} criados, {{updatedCount}} atualizados, {{skippedCount}} ignorados."
+  },
+  "planning": {
+    "header": {
+      "title": "Unidades de Planificação",
+      "subtitle": "Gestão de temas, recursos e atividades curriculares ({{count}} registos)",
+      "addBtn": "Nova Unidade"
+    },
+    "filters": {
+      "search": "Pesquisar tema, atividades, manuais...",
+      "allLevels": "Todos os Anos / Níveis",
+      "allGroups": "Todas as Turmas"
+    },
+    "columns": {
+      "theme": "Tema / Unidade",
+      "scope": "Âmbito / Alvo",
+      "manual": "Manual / Páginas",
+      "actions": "Ações"
+    },
+    "scope": {
+      "global": "Geral / Ano Letivo",
+      "level": "Ano / Nível Específico",
+      "group": "Turma Específica"
+    },
+    "details": {
+      "activities": "Atividades",
+      "registers": "Registos",
+      "resPhysical": "Rec. Físicos",
+      "resDigital": "Rec. Digitais",
+      "exPhysical": "Ex. Físicos",
+      "exDigital": "Ex. Digitais"
+    },
+    "form": {
+      "createTitle": "Nova Unidade de Planificação",
+      "editTitle": "Editar Unidade de Planificação",
+      "theme": "Tema / Nome da Unidade *",
+      "scopeType": "Âmbito de Aplicação",
+      "levelSelect": "Selecione o Nível *",
+      "groupSelect": "Selecione a Turma *",
+      "manualPages": "Manual / Páginas",
+      "activities": "Atividades e Tarefas",
+      "resPhysical": "Recursos Físicos",
+      "resDigital": "Recursos Digitais",
+      "exPhysical": "Exercícios Físicos",
+      "exDigital": "Exercícios Digitais",
+      "registers": "Observações / Registos"
+    },
+    "empty": "Nenhuma unidade de planificação encontrada."
+  },
+  "evaluations": {
+    "analytics": {
+      "title": "Análise de Avaliações e Tendências",
+      "subtitle": "Evolução qualitativa de autoavaliação vs. avaliação do docente",
+      "searchPlaceholder": "Pesquisar aluno, processo, observação...",
+      "allLevels": "Todos os Níveis",
+      "allGroups": "Todas as Turmas",
+      "allStudents": "Todos os Alunos",
+      "switchToSingleDate": "Filtrar por data única",
+      "switchToRangeDate": "Filtrar por intervalo de datas",
+      "chartTitle": "Evolução Temporal das Avaliações",
+      "studentLine": "Autoavaliação (Aluno)",
+      "teacherLine": "Docente",
+      "noChartData": "Sem dados suficientes para gerar gráfico de tendência.",
+      "date": "Data",
+      "filterTitle": "Filtrar Avaliações",
+      "singleMode": "Data Única",
+      "rangeMode": "Intervalo de Datas",
+      "searchLabel": "Pesquisar",
+      "levelLabel": "Nível",
+      "groupLabel": "Turma",
+      "studentLabel": "Aluno",
+      "singleDateLabel": "Data da Aula",
+      "rangeDateLabel": "Intervalo de Datas"
+    },
+    "kpi": {
+      "studentAvg": "Média Autoavaliação",
+      "studentAvgDesc": "Perceção do aluno",
+      "teacherAvg": "Média Professor",
+      "teacherAvgDesc": "Avaliação pedagógica",
+      "alignmentGap": "Índice de Alinhamento",
+      "alignmentDesc": "Diferença (Docente - Aluno)",
+      "attendance": "Taxa de Presenças",
+      "attendanceDesc": "Presenças vs. Ausências"
+    },
+    "tabs": {
+      "students": "Por Aluno",
+      "groups": "Por Turma",
+      "levels": "Por Nível"
+    },
+    "table": {
+      "student": "Aluno",
+      "group": "Turma",
+      "level": "Nível / Ano",
+      "studentAvg": "Autoavaliação",
+      "teacherAvg": "Avaliação Professor",
+      "delta": "Perceção / Diferença",
+      "attendance": "Presenças",
+      "evalCount": "Total Registos"
+    }
   }
 }
