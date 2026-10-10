@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react'
 const VARIANTS = {
     default: 'bg-content text-main hover:opacity-90',
     primary: 'bg-content text-main hover:opacity-90',
+    secondary: 'bg-content/50 text-main hover:bg-content/65',
     outline: 'bg-transparent text-content border border-line hover:bg-content/10',
     ghost: 'bg-transparent text-content hover:bg-content/10',
     danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20'
