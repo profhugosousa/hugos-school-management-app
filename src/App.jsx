@@ -8,14 +8,16 @@ import { SidebarProvider } from './context/SidebarContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { AcademicYearsPage } from './features/academic-years/AcademicYearsPage'
 import { LoginPage } from './features/auth/LoginPage'
+import { EvaluationsPage } from './features/evaluations/EvaluationsPage'
 import { GroupsPage } from './features/groups/GroupsPage'
 import { LessonsPage } from './features/lessons/LessonsPage'
+import { PlanningUnitsPage } from './features/planning/PlanningUnitsPage'
 import { StudentsPage } from './features/students/StudentsPage'
 import { useAuth } from './hooks/useAuth'
 
 const AppContent = () => {
   const { user, loading } = useAuth()
-  const [currentView, setCurrentView] = useState('academic-years')
+  const [currentView, setCurrentView] = useState('lessons')
   const { t } = useTranslation()
 
   if (loading) {
@@ -40,6 +42,11 @@ const AppContent = () => {
         return <GroupsPage />
       case 'students':
         return <StudentsPage />
+      case 'planning':
+      case 'planning-units':
+        return <PlanningUnitsPage />
+      case 'evaluations':
+        return <EvaluationsPage />
       default:
         return (
           <div className="p-6 border border-line bg-main font-mono text-xs text-muted uppercase">
