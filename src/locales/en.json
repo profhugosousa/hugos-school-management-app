@@ -163,7 +163,8 @@
       "studentView": "Student View",
       "delete": "Delete",
       "Edit": "Edit",
-      "export": "Export"
+      "export": "Export",
+      "evaluate": "Evaluation"
     },
     "details": {
       "notes": "Teacher Notes",
@@ -172,6 +173,42 @@
       "attention": "Attention Box",
       "noSummary": "No summary provided.",
       "summary": "Summary"
+    },
+    "evaluations": {
+      "title": "Self-Evaluation & Lesson Assessment",
+      "subtitle": "Lesson No.",
+      "loading": "Loading student list...",
+      "empty": "No students enrolled in this group.",
+      "present": "Present",
+      "absent": "Absent",
+      "studentRating": "Self-Evaluation (Student)",
+      "teacherRating": "Teacher Evaluation",
+      "autoSynced": "auto-synced",
+      "notesPlaceholder": "Individual notes & feedback...",
+      "save": "Save Evaluations",
+      "rubricTitle": "Achievement Guide & Self-Evaluation Rubric",
+      "levels": {
+        "1": {
+          "title": "1 ★ — Getting Started",
+          "desc": "You recognized challenges and are ready to reset your focus. Every great journey starts with the choice to keep trying!"
+        },
+        "2": {
+          "title": "2 ★★ — Building Momentum",
+          "desc": "You put in good effort during parts of the class. With just a bit more focus, you'll reach the next milestone!"
+        },
+        "3": {
+          "title": "3 ★★★ — Solid Focus",
+          "desc": "You completed tasks with steady focus and a positive attitude. You're on track — keep pushing to reach the top!"
+        },
+        "4": {
+          "title": "4 ★★★★ — Outstanding Work",
+          "desc": "Outstanding dedication, independence, and positive energy! You're just one step away from pure mastery — brilliant work!"
+        },
+        "5": {
+          "title": "5 ★★★★★ — Star Performer",
+          "desc": "You surpassed all expectations! Total focus, peer leadership, creativity, and pride in your work. You are a true inspiration in class!"
+        }
+      }
     }
   },
   "subjects": {

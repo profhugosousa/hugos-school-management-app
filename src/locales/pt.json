@@ -163,7 +163,8 @@
       "studentView": "Vista do Aluno",
       "delete": "Eliminar",
       "Edit": "Editar",
-      "export": "Exportar"
+      "export": "Exportar",
+      "evaluate": "Avaliação"
     },
     "details": {
       "notes": "Notas do Professor",
@@ -172,6 +173,42 @@
       "attention": "Atenção",
       "noSummary": "Não escreveu sumário.",
       "summary": "Sumário"
+    },
+    "evaluations": {
+      "title": "Autoavaliação e Avaliação da Aula",
+      "subtitle": "Aula Nº",
+      "loading": "A carregar lista de alunos...",
+      "empty": "Nenhum aluno inscrito nesta turma.",
+      "present": "Presente",
+      "absent": "Ausente",
+      "studentRating": "Autoavaliação (Aluno)",
+      "teacherRating": "Avaliação do Professor",
+      "autoSynced": "sincronizado",
+      "notesPlaceholder": "Observações / Notas individuais...",
+      "save": "Guardar Avaliações",
+      "rubricTitle": "Guia de Conquista e Autoavaliação",
+      "levels": {
+        "1": {
+          "title": "1 ★ — Em Arranque",
+          "desc": "Reconheceste os teus desafios e estás pronto para focar a tua energia na próxima aula! Cada grande conquista começa com a determinação de tentar de novo."
+        },
+        "2": {
+          "title": "2 ★★ — A Ganhar Balanço",
+          "desc": "Trabalhaste com esforço em partes da aula. Com mais um pouco de persistência e atenção, estás quase a chegar ao próximo nível!"
+        },
+        "3": {
+          "title": "3 ★★★ — Foco Sólido",
+          "desc": "Cumpriste as tarefas com empenho, autonomia e atitude positiva. Estás no bom caminho — continua a desafiar-te para chegar ao topo!"
+        },
+        "4": {
+          "title": "4 ★★★★ — Alto Desempenho",
+          "desc": "Dedicação exemplar, excelente autonomia e grande apoio ao ritmo da aula! Faltou muito pouco para a mestria total — brilhante trabalho!"
+        },
+        "5": {
+          "title": "5 ★★★★★ — Estrela Dourada",
+          "desc": "Superaste todas as expectativas! Concentração total, entreajuda, criatividade e orgulho no trabalho. És uma verdadeira inspiração para a turma!"
+        }
+      }
     }
   },
   "subjects": {
