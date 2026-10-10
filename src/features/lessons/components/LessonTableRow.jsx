@@ -8,6 +8,7 @@ export const LessonTableRow = ({
     isExpanded,
     onToggleExpand,
     onStudentView,
+    onEvaluate,
     onEdit,
     onExport,
     onDelete
@@ -45,6 +46,7 @@ export const LessonTableRow = ({
                         <LessonDetailView
                             lesson={lesson}
                             onStudentView={onStudentView}
+                            onEvaluate={onEvaluate}
                             onEdit={onEdit}
                             onExport={onExport}
                             onDelete={onDelete}

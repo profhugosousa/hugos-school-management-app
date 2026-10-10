@@ -1,10 +1,12 @@
-import { Edit2, MonitorPlay, Share, Trash2 } from 'lucide-react'
+import { Award, Edit2, MonitorPlay, Share, Trash2 } from 'lucide-react'
 import { RichText } from '../../../components/common/RichTextEditor'
+import { Button } from '../../../components/ui/Button'
 import { useFormatters } from '../../../hooks/useFormatters'
 
 export const LessonDetailView = ({
     lesson,
     onStudentView,
+    onEvaluate,
     onEdit,
     onExport,
     onDelete
@@ -18,7 +20,7 @@ export const LessonDetailView = ({
     const teacherNotes = lesson.teacher_notes || lesson.teacherNotes
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 font-mono text-xs">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left Column */}
                 <div className="space-y-4">
@@ -88,35 +90,49 @@ export const LessonDetailView = ({
 
             {/* Action Toolbar */}
             <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-line/50">
-                <button
+                <Button
+                    variant="primary"
+                    onClick={() => onEvaluate(lesson)}
+                    className="border-accent/60 bg-accent/10 hover:bg-accent hover:text-white text-accent"
+                >
+                    <Award className="w-4 h-4" />
+                    <span>{t('lessons.actions.evaluate', 'Avaliação')}</span>
+                </Button>
+
+                <Button
+                    variant="secondary"
                     onClick={() => onStudentView(lesson)}
-                    className="px-4 py-2 bg-accent text-white hover:bg-accent/90 transition-colors uppercase font-bold flex items-center gap-2 cursor-pointer"
+                    className="bg-accent text-white hover:bg-accent/90"
                 >
                     <MonitorPlay className="w-4 h-4" />
-                    {t('lessons.actions.studentView', 'Student View')}
-                </button>
-                <button
+                    <span>{t('lessons.actions.studentView', 'Student View')}</span>
+                </Button>
+
+                <Button
+                    variant="outline"
                     onClick={() => onEdit(lesson)}
-                    className="px-4 py-2 border border-line bg-main hover:bg-content hover:text-main text-content transition-colors uppercase flex items-center gap-2 cursor-pointer"
                 >
                     <Edit2 className="w-4 h-4" />
-                    {t('lessons.actions.edit', 'Edit')}
-                </button>
-                <button
+                    <span>{t('lessons.actions.edit', 'Edit')}</span>
+                </Button>
+
+                <Button
+                    variant="outline"
                     onClick={() => onExport(lesson)}
-                    className="px-4 py-2 border border-line bg-main hover:bg-content hover:text-main text-content transition-colors uppercase flex items-center gap-2 cursor-pointer"
                 >
                     <Share className="w-4 h-4" />
-                    {t('lessons.actions.export', 'Export')}
-                </button>
+                    <span>{t('lessons.actions.export', 'Export')}</span>
+                </Button>
+
                 <div className="flex-1" />
-                <button
+
+                <Button
+                    variant="danger"
                     onClick={() => onDelete(lesson.id)}
-                    className="px-4 py-2 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-colors uppercase flex items-center gap-2 cursor-pointer"
                 >
                     <Trash2 className="w-4 h-4" />
-                    {t('lessons.actions.delete', 'Delete')}
-                </button>
+                    <span>{t('lessons.actions.delete', 'Delete')}</span>
+                </Button>
             </div>
         </div>
     )

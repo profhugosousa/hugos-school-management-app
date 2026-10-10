@@ -14,6 +14,7 @@ export const LessonTable = ({
     onEdit,
     onDelete,
     onStudentView,
+    onEvaluate,
     onExport
 }) => {
     const { t } = useTranslation()
@@ -61,6 +62,7 @@ export const LessonTable = ({
                             isExpanded={expandedId === lesson.id}
                             onToggleExpand={() => toggleExpand(lesson.id)}
                             onStudentView={onStudentView}
+                            onEvaluate={onEvaluate}
                             onEdit={onEdit}
                             onExport={onExport}
                             onDelete={onDelete}

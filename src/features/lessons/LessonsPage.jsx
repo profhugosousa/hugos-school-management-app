@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { CompleteModal } from '../../components/common/modals/CompleteModal'
 import { ConfirmModal } from '../../components/common/modals/ConfirmModal'
 import { useLessons } from '../../hooks/useLessons'
+import { LessonEvaluationModal } from '../lessons/components/LessonEvaluationModal'
 import { LessonExportModal } from '../lessons/components/LessonExportModal'
 import { LessonFilters } from '../lessons/components/LessonFilters'
 import { LessonFormModal } from '../lessons/components/LessonFormModal'
@@ -22,13 +23,15 @@ export const LessonsPage = () => {
         createLesson,
         updateLesson,
         deleteLesson,
-        exportLesson
+        exportLesson,
+        refresh
     } = useLessons()
 
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [isImportOpen, setIsImportOpen] = useState(false)
     const [editingLesson, setEditingLesson] = useState(null)
     const [studentViewLesson, setStudentViewLesson] = useState(null)
+    const [evaluatingLesson, setEvaluatingLesson] = useState(null)
     const [exportingLesson, setExportingLesson] = useState(null)
     const [pendingFormData, setPendingFormData] = useState(null)
     const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false)
@@ -161,6 +164,7 @@ export const LessonsPage = () => {
                 onEdit={handleOpenEdit}
                 onDelete={(id) => setConfirmDeleteId(id)}
                 onStudentView={(lesson) => setStudentViewLesson(lesson)}
+                onEvaluate={(lesson) => setEvaluatingLesson(lesson)}
                 onExport={(lesson) => setExportingLesson(lesson)}
             />
 
@@ -185,7 +189,13 @@ export const LessonsPage = () => {
                 onClose={() => setStudentViewLesson(null)}
             />
 
-            {/* Fixed: Pass sourceLesson and lessons props */}
+            <LessonEvaluationModal
+                isOpen={Boolean(evaluatingLesson)}
+                lesson={evaluatingLesson}
+                onClose={() => setEvaluatingLesson(null)}
+                onSaved={refresh}
+            />
+
             <LessonExportModal
                 isOpen={Boolean(exportingLesson)}
                 sourceLesson={exportingLesson}

@@ -1,5 +1,12 @@
 import { supabase } from '../config/supabase'
 
+function assertNoErrors(results, contextMsg = 'Database operation failed') {
+	const failed = results.find((r) => r && r.error)
+	if (failed) {
+		throw new Error(`${contextMsg}: ${failed.error.message}`)
+	}
+}
+
 /**
  * @typedef {Object} Evaluation
  * @property {string} id - Evaluation UUID.
@@ -28,7 +35,7 @@ export const evaluationService = {
 			.eq('lesson_id', lessonId)
 
 		if (error) throw new Error(`Failed to fetch evaluations for lesson: ${error.message}`)
-		if (!lessonEvals) return []
+		if (!lessonEvals || !lessonEvals.length) return []
 
 		return Promise.all(lessonEvals.map((e) => this.getById(e.evaluation_id)))
 	},
@@ -61,10 +68,51 @@ export const evaluationService = {
 	},
 
 	/**
+	 * Fetches students enrolled in a group for evaluation mapping.
+	 */
+	async getEnrolledStudents(groupId, academicYearId = null) {
+		const { data: students, error } = await supabase
+			.from('view_students')
+			.select('*')
+			.order('name', { ascending: true })
+
+		if (error) throw new Error(`Failed to fetch students: ${error.message}`)
+		if (!students || !students.length) return []
+
+		let query = supabase
+			.from('enrolment_students')
+			.select(`
+				student_id,
+				student_enrolments!inner (
+					id,
+					enrolment_groups!inner ( group_id ),
+					enrolment_academic_years ( academic_year_id ),
+					enrolment_group_numbers ( group_number )
+				)
+			`)
+			.eq('student_enrolments.enrolment_groups.group_id', groupId)
+
+		if (academicYearId) {
+			query = query.eq('student_enrolments.enrolment_academic_years.academic_year_id', academicYearId)
+		}
+
+		const { data: enrolments } = await query
+		const enrolMap = new Map()
+		enrolments?.forEach((e) => {
+			const enr = e.student_enrolments
+			const numRel = enr?.enrolment_group_numbers
+			const groupNum = Array.isArray(numRel) ? numRel[0]?.group_number : numRel?.group_number
+			enrolMap.set(e.student_id, groupNum ?? null)
+		})
+
+		return students
+			.filter((s) => enrolMap.has(s.id))
+			.map((s) => ({ ...s, groupNumber: enrolMap.get(s.id) }))
+			.sort((a, b) => (a.groupNumber ?? Infinity) - (b.groupNumber ?? Infinity))
+	},
+
+	/**
 	 * Creates a new evaluation record for a student in a lesson.
-	 * @param {Omit<Evaluation, 'id'>} data - Evaluation details.
-	 * @returns {Promise<Evaluation>} Created evaluation object.
-	 * @throws {Error} If insert operation fails.
 	 */
 	async create({ lessonId, studentId, isAttending = true, studentRating = null, teacherRating = null, notes = '' }) {
 		const { data: root, error } = await supabase
@@ -90,10 +138,6 @@ export const evaluationService = {
 
 	/**
 	 * Updates an existing evaluation entry.
-	 * @param {string} id - Evaluation UUID.
-	 * @param {Partial<Omit<Evaluation, 'id'|'lessonId'|'studentId'>>} updates - Attributes to update.
-	 * @returns {Promise<Evaluation>} Updated evaluation record.
-	 * @throws {Error} If update fails.
 	 */
 	async update(id, { isAttending, studentRating, teacherRating, notes }) {
 		const updates = []
@@ -112,29 +156,49 @@ export const evaluationService = {
 		}
 
 		const results = await Promise.all(updates)
-		const failed = results.find((r) => r.error)
-		if (failed) throw new Error(`Failed updating evaluation: ${failed.error.message}`)
+		assertNoErrors(results, 'Failed updating evaluation')
 
 		return this.getById(id)
 	},
 
 	/**
-	 * Deletes an evaluation entry by ID.
-	 * @param {string} id - Evaluation UUID.
-	 * @returns {Promise<boolean>} True if successfully deleted.
-	 * @throws {Error} If deletion fails.
+	 * Batch saves evaluations using existing create/update methods.
 	 */
+	async saveBatch(lessonId, items = []) {
+		const existing = await this.getByLesson(lessonId)
+		const existingMap = new Map(existing.map((e) => [e.studentId, e]))
+
+		await Promise.all(
+			items.map((item) => {
+				const current = existingMap.get(item.studentId)
+				if (current) {
+					return this.update(current.id, {
+						isAttending: item.isAttending,
+						studentRating: item.studentRating,
+						teacherRating: item.teacherRating,
+						notes: item.notes
+					})
+				} else {
+					return this.create({
+						lessonId,
+						studentId: item.studentId,
+						isAttending: item.isAttending,
+						studentRating: item.studentRating,
+						teacherRating: item.teacherRating,
+						notes: item.notes
+					})
+				}
+			})
+		)
+		return true
+	},
+
 	async delete(id) {
 		const { error } = await supabase.from('evaluations').delete().eq('id', id)
 		if (error) throw new Error(`Failed deleting evaluation: ${error.message}`)
 		return true
 	},
 
-	/**
-	 * Wipes all evaluation entries from the database.
-	 * @returns {Promise<boolean>} True if operation succeeded.
-	 * @throws {Error} If operation fails.
-	 */
 	async deleteAll() {
 		const { error } = await supabase
 			.from('evaluations')
