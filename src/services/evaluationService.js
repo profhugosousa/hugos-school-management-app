@@ -214,12 +214,30 @@ export const evaluationService = {
 		return true
 	},
 
+	/**
+	 * Deletes an evaluation by ID.
+	 */
 	async delete(id) {
 		const { error } = await supabase.from('evaluations').delete().eq('id', id)
 		if (error) throw new Error(`Failed deleting evaluation: ${error.message}`)
 		return true
 	},
 
+	/**
+	 * Deletes all evaluation entries associated with a specific lesson.
+	 * @param {string} lessonId - Target lesson UUID.
+	 */
+	async deleteByLesson(lessonId) {
+		const existing = await this.getByLesson(lessonId)
+		if (!existing || !existing.length) return true
+
+		await Promise.all(existing.map((e) => this.delete(e.id)))
+		return true
+	},
+
+	/**
+	 * Deletes all evaluations.
+	 */
 	async deleteAll() {
 		const { error } = await supabase
 			.from('evaluations')

@@ -187,6 +187,9 @@
       "autoSynced": "sincronizado",
       "notesPlaceholder": "Observações / Notas individuais...",
       "save": "Guardar Avaliações",
+      "delete": "Eliminar Avaliação",
+      "deleteConfirmTitle": "Eliminar Avaliações da Aula",
+      "deleteConfirmMessage": "Tem a certeza que pretende eliminar todas as avaliações registadas para esta aula? Esta ação não pode ser desfeita.",
       "rubricTitle": "Guia de Conquista e Autoavaliação",
       "levels": {
         "1": {

@@ -187,6 +187,9 @@
       "autoSynced": "auto-synced",
       "notesPlaceholder": "Individual notes & feedback...",
       "save": "Save Evaluations",
+      "delete": "Delete Evaluation",
+      "deleteConfirmTitle": "Delete Lesson Evaluations",
+      "deleteConfirmMessage": "Are you sure you want to delete all recorded evaluations for this lesson? This action cannot be undone.",
       "rubricTitle": "Achievement Guide & Self-Evaluation Rubric",
       "levels": {
         "1": {
