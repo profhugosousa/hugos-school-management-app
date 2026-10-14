@@ -13,19 +13,21 @@ export const StudentQuickActions = ({ student }) => {
     }
 
     return (
-        <div className="space-y-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+        <div className="space-y-4 p-4 bg-main border border-line font-mono text-xs min-w-0 max-w-full overflow-hidden">
             {/* Student Email */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div className="flex items-center justify-between gap-2 pb-3 border-b border-line min-w-0">
+                <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-wider">
                         {t('students.contacts.studentEmail')}
                     </p>
-                    <p className="text-sm font-medium text-gray-800">{studentEmail || '—'}</p>
+                    <p className="font-bold text-content mt-0.5 truncate max-w-full" title={studentEmail}>
+                        {studentEmail || '—'}
+                    </p>
                 </div>
                 {studentEmail && (
                     <a
                         href={`mailto:${studentEmail}`}
-                        className="p-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                        className="p-2 text-accent border border-accent/30 bg-accent/10 hover:bg-accent/20 transition-colors shrink-0"
                         title={t('students.contacts.sendEmail')}
                     >
                         <Mail className="w-4 h-4" />
@@ -34,30 +36,30 @@ export const StudentQuickActions = ({ student }) => {
             </div>
 
             {/* Guardians Contacts */}
-            <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            <div className="min-w-0">
+                <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">
                     {t('students.contacts.guardiansAndContacts')}
                 </p>
                 {student?.guardians && student.guardians.length > 0 ? (
-                    <div className="space-y-2">
+                    <div className="space-y-2 min-w-0">
                         {student.guardians.map((g, idx) => {
                             const waPhone = formatPhoneForWhatsApp(g.phone_number)
                             return (
                                 <div
                                     key={g.id || idx}
-                                    className="flex items-center justify-between p-2 rounded-lg bg-gray-50 text-sm"
+                                    className="flex items-center justify-between gap-2 p-2.5 border border-line bg-content/5 text-xs min-w-0"
                                 >
-                                    <div>
-                                        <p className="font-medium text-gray-800">{g.name}</p>
-                                        <p className="text-xs text-gray-500">
+                                    <div className="min-w-0 flex-1">
+                                        <p className="font-bold text-content truncate">{g.name}</p>
+                                        <p className="text-[11px] text-muted truncate">
                                             {g.relationship || 'Guardian'} {g.phone_number ? `• ${g.phone_number}` : ''}
                                         </p>
                                     </div>
-                                    <div className="flex items-center space-x-1">
+                                    <div className="flex items-center space-x-1 shrink-0">
                                         {g.email && (
                                             <a
                                                 href={`mailto:${g.email}`}
-                                                className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-white rounded transition-all"
+                                                className="p-1.5 text-muted hover:text-content hover:bg-content/10 transition-all"
                                                 title={`${t('students.contacts.sendEmail')} (${g.name})`}
                                             >
                                                 <Mail className="w-4 h-4" />
@@ -67,7 +69,7 @@ export const StudentQuickActions = ({ student }) => {
                                             <>
                                                 <a
                                                     href={`tel:${g.phone_number}`}
-                                                    className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-white rounded transition-all"
+                                                    className="p-1.5 text-muted hover:text-emerald-500 hover:bg-emerald-500/10 transition-all"
                                                     title={`${t('students.contacts.call')} ${g.name}`}
                                                 >
                                                     <Phone className="w-4 h-4" />
@@ -76,7 +78,7 @@ export const StudentQuickActions = ({ student }) => {
                                                     href={`https://wa.me/${waPhone}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-1.5 text-emerald-600 hover:bg-emerald-100 rounded transition-all"
+                                                    className="p-1.5 text-emerald-500 hover:bg-emerald-500/10 transition-all"
                                                     title={`${t('students.contacts.whatsapp')} (${g.name})`}
                                                 >
                                                     <MessageSquare className="w-4 h-4" />
@@ -89,7 +91,7 @@ export const StudentQuickActions = ({ student }) => {
                         })}
                     </div>
                 ) : (
-                    <p className="text-xs text-gray-400 italic">{t('students.contacts.noGuardians')}</p>
+                    <p className="text-xs text-muted italic">{t('students.contacts.noGuardians')}</p>
                 )}
             </div>
         </div>

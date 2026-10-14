@@ -16,7 +16,7 @@ export const StudentProgressChart = ({ evaluations = [] }) => {
 
     if (validEvaluations.length === 0) {
         return (
-            <div className="p-6 text-center text-xs text-gray-400 bg-gray-50 rounded-xl">
+            <div className="p-4 sm:p-6 text-center text-xs text-muted bg-main border border-line font-mono">
                 {t('students.radar.noData')}
             </div>
         )
@@ -40,16 +40,16 @@ export const StudentProgressChart = ({ evaluations = [] }) => {
     ]
 
     return (
-        <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-            <h4 className="text-sm font-semibold text-gray-800 mb-2">
+        <div className="p-3 sm:p-4 bg-main border border-line font-mono text-xs w-full max-w-full min-w-0 overflow-hidden">
+            <h4 className="font-bold text-content uppercase tracking-wider mb-2">
                 {t('students.radar.title')}
             </h4>
-            <div className="h-64 w-full">
+            <div className="h-52 sm:h-64 w-full max-w-full min-w-0 overflow-hidden">
                 <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                        <PolarGrid stroke="#e5e7eb" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#4b5563', fontSize: 11 }} />
-                        <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 10 }} />
+                    <RadarChart cx="50%" cy="50%" outerRadius="55%" data={chartData}>
+                        <PolarGrid stroke="rgb(var(--rgb-border-line))" />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'rgb(var(--rgb-text-muted))', fontSize: 8 }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 8 }} />
                         <Radar
                             name={t('students.radar.studentLegend')}
                             dataKey="Student"
@@ -65,7 +65,7 @@ export const StudentProgressChart = ({ evaluations = [] }) => {
                             fillOpacity={0.3}
                         />
                         <Tooltip />
-                        <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                        <Legend wrapperStyle={{ fontSize: '9px', paddingTop: '4px' }} />
                     </RadarChart>
                 </ResponsiveContainer>
             </div>

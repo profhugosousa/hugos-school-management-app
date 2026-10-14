@@ -1,8 +1,6 @@
-import { Loader2 } from 'lucide-react'
-import React from 'react'
+import { AlertTriangle, Edit2, Loader2, Trash2, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import StudentDetailCard from './StudentDetailCard'
-import StudentTableRow from './StudentTableRow'
 
 export default function StudentTable({
     students = [],
@@ -32,45 +30,115 @@ export default function StudentTable({
     }
 
     return (
-        <div className="border border-line bg-main overflow-x-auto">
-            <table className="w-full text-left border-collapse font-mono text-xs">
-                <thead>
-                    <tr className="border-b border-line bg-content/5 uppercase tracking-wider text-muted select-none">
-                        <th className="p-3.5 w-10">{t('students.table.photo', 'Foto')}</th>
-                        <th className="p-3.5">{t('students.table.number', 'Nº')}</th>
-                        <th className="p-3.5">{t('students.table.process', 'Proc.')}</th>
-                        <th className="p-3.5">{t('students.table.name', 'Nome')}</th>
-                        <th className="p-3.5">{t('students.table.group', 'Turma')}</th>
-                        <th className="p-3.5 text-right">{t('students.table.actions', 'Ações')}</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-line">
-                    {students.map((student) => {
-                        const isSelected = selectedStudentId === student.id
-                        return (
-                            <React.Fragment key={student.id}>
-                                <StudentTableRow
+        <div className="space-y-3 font-mono text-xs w-full max-w-full min-w-0">
+            {students.map((student) => {
+                const isSelected = selectedStudentId === student.id
+                const callNumber = student.groupNumber ?? student.number ?? student.group_number ?? null
+                const extraInfo = student.extra_info || {}
+                const hasSen = extraInfo.sen || extraInfo.nee
+
+                return (
+                    <div key={student.id} className="w-full max-w-full min-w-0">
+                        {/* Student Row Card */}
+                        <div
+                            onClick={() => onSelect(isSelected ? null : student)}
+                            className={`p-3 sm:p-3.5 border bg-main transition-all cursor-pointer w-full max-w-full min-w-0 ${isSelected
+                                ? 'border-accent bg-content/5 ring-1 ring-accent'
+                                : 'border-line hover:border-accent/60'
+                                }`}
+                        >
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-w-0">
+                                {/* Primary Student Metadata */}
+                                <div className="flex items-center gap-3 min-w-0 flex-1">
+                                    {student.photo_url ? (
+                                        <img
+                                            src={student.photo_url}
+                                            alt={student.name}
+                                            className="w-9 h-9 rounded-full object-cover border border-line shrink-0"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null
+                                                e.currentTarget.style.display = 'none'
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="w-9 h-9 rounded-full bg-content/10 border border-line flex items-center justify-center text-muted shrink-0">
+                                            <User className="w-5 h-5" />
+                                        </div>
+                                    )}
+
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <h4 className="font-bold uppercase text-content truncate text-sm">
+                                                {student.name}
+                                            </h4>
+                                            {hasSen && (
+                                                <span
+                                                    className="p-0.5 text-amber-500 bg-amber-500/10 border border-amber-500/20 shrink-0"
+                                                    title={t('students.badges.senRequired', 'SEN / NEE')}
+                                                >
+                                                    <AlertTriangle className="w-3.5 h-3.5" />
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted mt-1 font-mono">
+                                            <span>
+                                                {t('students.table.process', 'Proc.')}:{' '}
+                                                <strong className="text-accent font-bold">
+                                                    #{student.process_number || '—'}
+                                                </strong>
+                                            </span>
+                                            <span>
+                                                {t('students.table.number', 'Nº')}:{' '}
+                                                <strong className="text-accent font-bold">
+                                                    {callNumber !== null ? `#${callNumber}` : '—'}
+                                                </strong>
+                                            </span>
+                                            <span className="truncate">
+                                                {t('students.table.group', 'Turma')}:{' '}
+                                                <strong className="text-content font-bold">
+                                                    {student.display_name || student.group_name || student.groupId || '—'}
+                                                </strong>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Row Actions */}
+                                <div
+                                    className="flex items-center justify-end gap-1 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-line"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <button
+                                        onClick={() => onEdit(student)}
+                                        className="p-1.5 text-muted hover:text-content hover:bg-content/10 transition-colors cursor-pointer"
+                                        title={t('students.actions.edit', 'Editar Aluno')}
+                                    >
+                                        <Edit2 className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => onDelete(student)}
+                                        className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                        title={t('students.actions.delete', 'Eliminar Aluno')}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Mobile Detail Expansion (Full Width, No Left Indentation) */}
+                        {isSelected && (
+                            <div className="lg:hidden mt-2 w-full max-w-full min-w-0 overflow-hidden">
+                                <StudentDetailCard
                                     student={student}
-                                    isSelected={isSelected}
-                                    onSelect={onSelect}
-                                    onEdit={onEdit}
-                                    onDelete={onDelete}
+                                    onClose={() => onSelect(null)}
                                 />
-                                {isSelected && (
-                                    <tr className="lg:hidden bg-content/5 border-b border-line">
-                                        <td colSpan={6} className="p-2 sm:p-4">
-                                            <StudentDetailCard
-                                                student={student}
-                                                onClose={() => onSelect(null)}
-                                            />
-                                        </td>
-                                    </tr>
-                                )}
-                            </React.Fragment>
-                        )
-                    })}
-                </tbody>
-            </table>
+                            </div>
+                        )}
+                    </div>
+                )
+            })}
         </div>
     )
 }

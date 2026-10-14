@@ -30,40 +30,40 @@ export const StudentIncidentLog = ({ incidents = [], onAddIncident }) => {
             case 'praise':
                 return {
                     icon: Award,
-                    style: 'bg-amber-50 text-amber-700 border-amber-200',
+                    style: 'bg-amber-500/10 text-amber-500 border-amber-500/30',
                     label: t('students.incidents.types.praise')
                 }
             case 'behavioral':
                 return {
                     icon: ShieldAlert,
-                    style: 'bg-purple-50 text-purple-700 border-purple-200',
+                    style: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
                     label: t('students.incidents.types.behavioral')
                 }
             case 'warning':
                 return {
                     icon: AlertCircle,
-                    style: 'bg-rose-50 text-rose-700 border-rose-200',
+                    style: 'bg-rose-500/10 text-rose-500 border-rose-500/30',
                     label: t('students.incidents.types.warning')
                 }
             default:
                 return {
                     icon: BookOpen,
-                    style: 'bg-blue-50 text-blue-700 border-blue-200',
+                    style: 'bg-accent/10 text-accent border-accent/30',
                     label: t('students.incidents.types.pedagogical')
                 }
         }
     }
 
     return (
-        <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-gray-800">
+        <div className="p-3 sm:p-4 bg-main border border-line font-mono text-xs space-y-3 sm:space-y-4 w-full max-w-full min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between min-w-0">
+                <h4 className="font-bold text-content uppercase tracking-wider truncate">
                     {t('students.incidents.title')}
                 </h4>
                 {!isAdding && (
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-700"
+                        className="inline-flex items-center text-xs font-bold text-accent hover:underline cursor-pointer shrink-0"
                     >
                         <Plus className="w-3.5 h-3.5 mr-1" />
                         {t('students.incidents.addIncident')}
@@ -73,16 +73,16 @@ export const StudentIncidentLog = ({ incidents = [], onAddIncident }) => {
 
             {/* Add New Form */}
             {isAdding && (
-                <form onSubmit={handleSubmit} className="p-3 bg-gray-50 rounded-lg space-y-3 border border-gray-200">
-                    <div className="grid grid-cols-2 gap-2">
+                <form onSubmit={handleSubmit} className="p-3 bg-content/5 border border-line space-y-3 w-full max-w-full min-w-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                            <label className="block text-[10px] font-bold uppercase text-muted mb-1">
                                 {t('students.incidents.type')}
                             </label>
                             <select
                                 value={incidentType}
                                 onChange={(e) => setIncidentType(e.target.value)}
-                                className="w-full text-xs p-2 rounded border border-gray-300 bg-white"
+                                className="w-full text-xs p-1.5 border border-line bg-main text-content focus:outline-none focus:border-accent"
                             >
                                 <option value="praise">{t('students.incidents.types.praise')}</option>
                                 <option value="pedagogical">{t('students.incidents.types.pedagogical')}</option>
@@ -91,14 +91,14 @@ export const StudentIncidentLog = ({ incidents = [], onAddIncident }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                            <label className="block text-[10px] font-bold uppercase text-muted mb-1">
                                 {t('students.incidents.date')}
                             </label>
                             <input
                                 type="date"
                                 value={incidentDate}
                                 onChange={(e) => setIncidentDate(e.target.value)}
-                                className="w-full text-xs p-2 rounded border border-gray-300 bg-white"
+                                className="w-full text-xs p-1.5 border border-line bg-main text-content focus:outline-none focus:border-accent"
                             />
                         </div>
                     </div>
@@ -109,7 +109,7 @@ export const StudentIncidentLog = ({ incidents = [], onAddIncident }) => {
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder={t('students.incidents.placeholder')}
                             rows={3}
-                            className="w-full text-xs p-2 rounded border border-gray-300 bg-white resize-none"
+                            className="w-full text-xs p-2 border border-line bg-main text-content focus:outline-none focus:border-accent resize-none"
                             required
                         />
                     </div>
@@ -118,13 +118,13 @@ export const StudentIncidentLog = ({ incidents = [], onAddIncident }) => {
                         <button
                             type="button"
                             onClick={() => setIsAdding(false)}
-                            className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-200 rounded"
+                            className="px-3 py-1 text-xs border border-line text-muted hover:text-content uppercase cursor-pointer"
                         >
                             {t('students.incidents.cancel')}
                         </button>
                         <button
                             type="submit"
-                            className="px-3 py-1 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded font-medium"
+                            className="px-3 py-1 text-xs bg-accent text-main font-bold uppercase cursor-pointer hover:opacity-90"
                         >
                             {t('students.incidents.save')}
                         </button>
@@ -132,28 +132,28 @@ export const StudentIncidentLog = ({ incidents = [], onAddIncident }) => {
                 </form>
             )}
 
-            {/* List */}
+            {/* Incident List */}
             {incidents.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-2 w-full max-w-full min-w-0">
                     {incidents.map((inc) => {
                         const meta = getTypeBadge(inc.incident_type)
                         const Icon = meta.icon
                         return (
-                            <div key={inc.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100 space-y-1">
+                            <div key={inc.id} className="p-2.5 sm:p-3 bg-content/5 border border-line space-y-1 w-full max-w-full min-w-0">
                                 <div className="flex items-center justify-between">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${meta.style}`}>
+                                    <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold border uppercase ${meta.style}`}>
                                         <Icon className="w-3 h-3 mr-1" />
                                         {meta.label}
                                     </span>
-                                    <span className="text-[10px] text-gray-400">{inc.incident_date}</span>
+                                    <span className="text-[10px] text-muted">{inc.incident_date}</span>
                                 </div>
-                                <p className="text-xs text-gray-700 leading-relaxed">{inc.description}</p>
+                                <p className="text-xs text-content leading-relaxed mt-1 break-words">{inc.description}</p>
                             </div>
                         )
                     })}
                 </div>
             ) : (
-                <p className="text-xs text-gray-400 italic text-center py-2">
+                <p className="text-xs text-muted italic text-center py-2">
                     {t('students.incidents.noIncidents')}
                 </p>
             )}

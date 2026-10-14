@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  /* LIGHT THEME (Space Indigo Sidebar & Header, White Main Background) */
+  /* LIGHT THEME: White Main Canvas + Space Indigo Nav & Header */
   --rgb-bg-main: 255 255 255;
   /* White #ffffff */
-  --rgb-bg-sidebar: 15 21 36;
+  --rgb-bg-nav: 15 21 36;
   /* Space Indigo 900 #0f1524 */
   --rgb-bg-header: 11 15 25;
   /* Space Indigo 950 #0b0f19 */
-  --rgb-sidebar-text: 237 240 247;
+  --rgb-nav-text: 237 240 247;
   /* Space Indigo 50 #edf0f7 */
 
   --rgb-text-content: 24 27 26;
@@ -25,22 +25,22 @@
 }
 
 .dark {
-  /* DARK THEME INVERSION (Space Indigo Main Background + Darker Sidebar) */
+  /* DARK THEME INVERSION: Space Indigo Canvas + Elevated Surface Headers */
   --rgb-bg-main: 11 15 25;
   /* Space Indigo 950 #0b0f19 */
-  --rgb-bg-sidebar: 15 21 36;
-  /* Space Indigo 900 #0f1524 */
-  --rgb-bg-header: 7 10 18;
-  /* Space Indigo Dark #070a12 */
-  --rgb-sidebar-text: 219 225 240;
+  --rgb-bg-nav: 237 240 247;
+  /* Space Indigo 50 #edf0f7 */
+  --rgb-bg-header: 219 225 240;
   /* Space Indigo 100 #dbe1f0 */
+  --rgb-nav-text: 11 15 25;
+  /* Space Indigo 950 #0b0f19 */
 
   --rgb-text-content: 237 240 247;
   /* Space Indigo 50 #edf0f7 */
   --rgb-text-muted: 148 164 209;
   /* Space Indigo 300 #94a4d1 */
-  --rgb-border-line: 31 41 71;
-  /* Space Indigo 800 #1f2947 */
+  --rgb-border-line: 46 62 107;
+  /* Space Indigo 700 #2e3e6b */
 
   --rgb-accent: 112 134 194;
   /* Space Indigo 400 #7086c2 */
@@ -51,13 +51,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
     --rgb-bg-main: 11 15 25;
-    --rgb-bg-sidebar: 15 21 36;
-    --rgb-bg-header: 7 10 18;
-    --rgb-sidebar-text: 219 225 240;
+    --rgb-bg-nav: 237 240 247;
+    --rgb-bg-header: 219 225 240;
+    --rgb-nav-text: 11 15 25;
 
     --rgb-text-content: 237 240 247;
     --rgb-text-muted: 148 164 209;
-    --rgb-border-line: 31 41 71;
+    --rgb-border-line: 46 62 107;
 
     --rgb-accent: 112 134 194;
 
@@ -66,64 +66,12 @@
 }
 
 @theme {
-  /* Space Indigo Scale */
-  --color-space-indigo-50: #edf0f7;
-  --color-space-indigo-100: #dbe1f0;
-  --color-space-indigo-200: #b8c2e0;
-  --color-space-indigo-300: #94a4d1;
-  --color-space-indigo-400: #7086c2;
-  --color-space-indigo-500: #4d68b3;
-  --color-space-indigo-600: #3d538f;
-  --color-space-indigo-700: #2e3e6b;
-  --color-space-indigo-800: #1f2947;
-  --color-space-indigo-900: #0f1524;
-  --color-space-indigo-950: #0b0f19;
-
-  /* Dust Grey Scale */
-  --color-dust-grey-50: #f1f3f3;
-  --color-dust-grey-100: #e4e7e6;
-  --color-dust-grey-200: #c8d0ce;
-  --color-dust-grey-300: #adb8b5;
-  --color-dust-grey-400: #92a09c;
-  --color-dust-grey-500: #778883;
-  --color-dust-grey-600: #5f6d69;
-  --color-dust-grey-700: #47524f;
-  --color-dust-grey-800: #2f3735;
-  --color-dust-grey-900: #181b1a;
-  --color-dust-grey-950: #111312;
-
-  /* Saddle Brown Scale */
-  --color-saddle-brown-50: #f9f1eb;
-  --color-saddle-brown-100: #f4e3d7;
-  --color-saddle-brown-200: #e8c6b0;
-  --color-saddle-brown-300: #ddaa88;
-  --color-saddle-brown-400: #d18e61;
-  --color-saddle-brown-500: #c67139;
-  --color-saddle-brown-600: #9e5b2e;
-  --color-saddle-brown-700: #774422;
-  --color-saddle-brown-800: #4f2d17;
-  --color-saddle-brown-900: #28170b;
-  --color-saddle-brown-950: #1c1008;
-
-  /* Chocolate Scale */
-  --color-chocolate-50: #fbf0e9;
-  --color-chocolate-100: #f8e1d3;
-  --color-chocolate-200: #f1c3a7;
-  --color-chocolate-300: #eaa67b;
-  --color-chocolate-400: #e28850;
-  --color-chocolate-500: #db6a24;
-  --color-chocolate-600: #af551d;
-  --color-chocolate-700: #844015;
-  --color-chocolate-800: #582a0e;
-  --color-chocolate-900: #2c1507;
-  --color-chocolate-950: #1f0f05;
-
-  /* Semantic Theme Mappings */
+  /* Semantic Palette Mappings */
   --color-main: rgb(var(--rgb-bg-main));
-  --color-sidebar: rgb(var(--rgb-bg-sidebar));
+  --color-nav: rgb(var(--rgb-bg-nav));
   --color-header: rgb(var(--rgb-bg-header));
   --color-content: rgb(var(--rgb-text-content));
-  --color-sidebar-content: rgb(var(--rgb-sidebar-text));
+  --color-nav-content: rgb(var(--rgb-nav-text));
   --color-muted: rgb(var(--rgb-text-muted));
   --color-line: rgb(var(--rgb-border-line));
   --color-accent: rgb(var(--rgb-accent));
