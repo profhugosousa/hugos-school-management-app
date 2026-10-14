@@ -20,15 +20,15 @@ export const LessonDetailView = ({
     const teacherNotes = lesson.teacher_notes || lesson.teacherNotes
 
     return (
-        <div className="space-y-6 font-mono text-xs">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6 font-mono text-xs w-full min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full min-w-0">
                 {/* Left Column */}
-                <div className="space-y-4">
+                <div className="space-y-4 min-w-0">
                     <div>
                         <h4 className="font-bold uppercase tracking-wider text-muted mb-2">
                             {t('lessons.details.summary', 'Summary')}
                         </h4>
-                        <div className="bg-main border border-line p-4">
+                        <div className="bg-main border border-line p-4 min-w-0">
                             {hasContent(summary) ? (
                                 <RichText html={formatHtmlContent(summary)} />
                             ) : (
@@ -44,7 +44,7 @@ export const LessonDetailView = ({
                             <h4 className="font-bold uppercase tracking-wider text-yellow-600 mb-2">
                                 {t('lessons.details.attention', 'Attention Box')}
                             </h4>
-                            <div className="bg-yellow-500/10 border border-yellow-500/30 p-4">
+                            <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 min-w-0">
                                 <RichText html={formatHtmlContent(attentionBox)} />
                             </div>
                         </div>
@@ -55,7 +55,7 @@ export const LessonDetailView = ({
                             <h4 className="font-bold uppercase tracking-wider text-muted mb-2">
                                 {t('lessons.details.stepByStep', 'Step-by-Step Plan')}
                             </h4>
-                            <div className="bg-main border border-line p-4">
+                            <div className="bg-main border border-line p-4 min-w-0">
                                 <RichText html={formatHtmlContent(stepByStep)} />
                             </div>
                         </div>
@@ -63,13 +63,13 @@ export const LessonDetailView = ({
                 </div>
 
                 {/* Right Column */}
-                <div className="space-y-4">
+                <div className="space-y-4 min-w-0">
                     {hasContent(materials) && (
                         <div>
                             <h4 className="font-bold uppercase tracking-wider text-muted mb-2">
                                 {t('lessons.details.materials', 'Materials & Resources')}
                             </h4>
-                            <div className="bg-main border border-line p-4">
+                            <div className="bg-main border border-line p-4 min-w-0">
                                 <RichText html={formatHtmlContent(materials)} />
                             </div>
                         </div>
@@ -80,7 +80,7 @@ export const LessonDetailView = ({
                             <h4 className="font-bold uppercase tracking-wider text-muted mb-2">
                                 {t('lessons.details.notes', 'Teacher Notes')}
                             </h4>
-                            <div className="bg-main border border-line p-4">
+                            <div className="bg-main border border-line p-4 min-w-0">
                                 <RichText html={formatHtmlContent(teacherNotes)} />
                             </div>
                         </div>
@@ -89,7 +89,7 @@ export const LessonDetailView = ({
             </div>
 
             {/* Action Toolbar */}
-            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-line/50">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-4 border-t border-line/50">
                 <Button
                     variant="primary"
                     onClick={() => onEvaluate(lesson)}
@@ -124,7 +124,7 @@ export const LessonDetailView = ({
                     <span>{t('lessons.actions.export', 'Export')}</span>
                 </Button>
 
-                <div className="flex-1" />
+                <div className="flex-1 min-w-[20px]" />
 
                 <Button
                     variant="danger"
