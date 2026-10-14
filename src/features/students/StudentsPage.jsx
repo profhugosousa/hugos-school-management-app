@@ -102,10 +102,17 @@ export function StudentsPage() {
     }
 
     const handleFormSubmit = async (formData) => {
+        const fullData = {
+            ...formData,
+            academic_year_id: formData.academic_year_id || activeYear?.id,
+            academicYearId: formData.academic_year_id || activeYear?.id,
+            yearId: formData.academic_year_id || activeYear?.id
+        }
+
         if (selectedStudent) {
-            await updateStudent(selectedStudent.id, formData)
+            await updateStudent(selectedStudent.id, fullData)
         } else {
-            await createStudent({ ...formData, academic_year_id: activeYear?.id })
+            await createStudent(fullData)
         }
         setIsFormOpen(false)
     }
@@ -174,6 +181,7 @@ export function StudentsPage() {
                 <StudentFormModal
                     isOpen={isFormOpen}
                     initialData={selectedStudent}
+                    groups={groups}
                     onClose={() => setIsFormOpen(false)}
                     onSubmit={handleFormSubmit}
                 />

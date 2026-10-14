@@ -1,15 +1,46 @@
 import { UserCheck, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { supabase } from '../../../config/supabase'
 import useEscapeKey from '../../../hooks/useEscapeKey'
 
-function StudentFormContent({ initialData, onClose, onSubmit }) {
+function StudentFormContent({ initialData, groups: initialGroups, onClose, onSubmit }) {
     const { t } = useTranslation()
+
+    // Local state for fetched groups fallback
+    const [fetchedGroups, setFetchedGroups] = useState([])
+
+    useEffect(() => {
+        if (!initialGroups || initialGroups.length === 0) {
+            let isMounted = true
+            const fetchGroups = async () => {
+                const { data, error } = await supabase.from('view_groups').select('*')
+                if (!error && data && isMounted) {
+                    setFetchedGroups(data)
+                }
+            }
+            fetchGroups()
+            return () => {
+                isMounted = false
+            }
+        }
+    }, [initialGroups])
+
+    // Derived state avoiding synchronous setState in effect
+    const availableGroups = (initialGroups && initialGroups.length > 0) ? initialGroups : fetchedGroups
 
     // Student core state
     const [name, setName] = useState(initialData?.name || '')
-    const [number, setNumber] = useState(initialData?.number || '')
+    const [number, setNumber] = useState(
+        initialData?.groupNumber ?? initialData?.number ?? initialData?.group_number ?? ''
+    )
     const [processNumber, setProcessNumber] = useState(initialData?.process_number || '')
+    const [groupId, setGroupId] = useState(
+        initialData?.groupId || initialData?.group_id || ''
+    )
+    const [birthdate, setBirthdate] = useState(initialData?.birthdate || '')
+    const [gender, setGender] = useState(initialData?.gender || 'undefined')
+    const [photoUrl, setPhotoUrl] = useState(initialData?.photo_url || initialData?.photoUrl || '')
 
     // Extra Info
     const extra = initialData?.extra_info || {}
@@ -20,7 +51,13 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
     const [values, setValues] = useState(Array.isArray(extra.values) ? extra.values.join(', ') : '')
 
     // Guardian Info State
-    const guardian = initialData?.guardian_info || {}
+    const guardian = initialData?.guardian_info || (initialData?.guardians?.[0] ? {
+        name: initialData.guardians[0].name,
+        relationship: initialData.guardians[0].relationship,
+        phone: initialData.guardians[0].phone_number,
+        email: initialData.guardians[0].email
+    } : {})
+
     const [guardianName, setGuardianName] = useState(guardian.name || '')
     const [guardianRelationship, setGuardianRelationship] = useState(guardian.relationship || '')
     const [guardianPhone, setGuardianPhone] = useState(guardian.phone || '')
@@ -35,10 +72,21 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
                 .map((item) => item.trim())
                 .filter(Boolean)
 
+        const parsedNumber = number !== '' && number !== null ? parseInt(number, 10) : null
+
         const payload = {
             name,
-            number: number ? parseInt(number, 10) : null,
+            number: parsedNumber,
+            group_number: parsedNumber,
+            groupNumber: parsedNumber,
             process_number: processNumber,
+            group_id: groupId || null,
+            groupId: groupId || null,
+            formId: groupId || null,
+            birthdate: birthdate || null,
+            gender: gender || 'undefined',
+            photo_url: photoUrl || null,
+            photoUrl: photoUrl || null,
             extra_info: {
                 sen,
                 senDetails: sen ? senDetails : '',
@@ -67,7 +115,7 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
 
                 <div>
                     <label className="block text-muted uppercase mb-1">
-                        {t('students.form.nameLabel')} *
+                        {t('students.form.nameLabel', 'Nome do Aluno')} *
                     </label>
                     <input
                         type="text"
@@ -78,10 +126,27 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label className="block text-muted uppercase mb-1">
-                            {t('students.form.numberLabel')}
+                            {t('students.form.groupLabel', 'Turma / Nível')}
+                        </label>
+                        <select
+                            value={groupId}
+                            onChange={(e) => setGroupId(e.target.value)}
+                            className="w-full px-3 py-1.5 bg-main border border-line text-content focus:outline-none focus:border-accent"
+                        >
+                            <option value="">{t('students.form.selectGroup', '-- Selecionar Turma --')}</option>
+                            {availableGroups.map((g) => (
+                                <option key={g.id} value={g.id}>
+                                    {g.display_name || g.name || `${g.level_name || ''} ${g.name || ''}`}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-muted uppercase mb-1">
+                            {t('students.form.numberLabel', 'Nº Chamada')}
                         </label>
                         <input
                             type="number"
@@ -92,13 +157,54 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
                     </div>
                     <div>
                         <label className="block text-muted uppercase mb-1">
-                            {t('students.form.processLabel')}
+                            {t('students.form.processLabel', 'Nº Processo')} *
                         </label>
                         <input
                             type="text"
+                            required
                             value={processNumber}
                             onChange={(e) => setProcessNumber(e.target.value)}
                             className="w-full px-3 py-1.5 bg-main border border-line text-content focus:outline-none focus:border-accent font-bold text-accent"
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label className="block text-muted uppercase mb-1">
+                            {t('students.form.birthdateLabel', 'Data de Nascimento')}
+                        </label>
+                        <input
+                            type="date"
+                            value={birthdate}
+                            onChange={(e) => setBirthdate(e.target.value)}
+                            className="w-full px-3 py-1.5 bg-main border border-line text-content focus:outline-none focus:border-accent"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-muted uppercase mb-1">
+                            {t('students.form.genderLabel', 'Género')}
+                        </label>
+                        <select
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                            className="w-full px-3 py-1.5 bg-main border border-line text-content focus:outline-none focus:border-accent"
+                        >
+                            <option value="undefined">{t('students.form.genderUndefined', 'Não especificado')}</option>
+                            <option value="male">{t('students.form.genderMale', 'Masculino')}</option>
+                            <option value="female">{t('students.form.genderFemale', 'Feminino')}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-muted uppercase mb-1">
+                            {t('students.form.photoLabel', 'URL da Fotografia')}
+                        </label>
+                        <input
+                            type="url"
+                            placeholder="https://..."
+                            value={photoUrl}
+                            onChange={(e) => setPhotoUrl(e.target.value)}
+                            className="w-full px-3 py-1.5 bg-main border border-line text-content focus:outline-none focus:border-accent"
                         />
                     </div>
                 </div>
@@ -175,14 +281,14 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
                             onChange={(e) => setSen(e.target.checked)}
                             className="accent-amber-500 cursor-pointer"
                         />
-                        <span>{t('students.form.senLabel')}</span>
+                        <span>{t('students.form.senLabel', 'Necessidades de Saúde Especiais / NEE')}</span>
                     </label>
                     {sen && (
                         <input
                             type="text"
                             value={senDetails}
                             onChange={(e) => setSenDetails(e.target.value)}
-                            placeholder={t('students.form.senDetailsLabel')}
+                            placeholder={t('students.form.senDetailsLabel', 'Detalhes das necessidades')}
                             className="w-full px-3 py-1.5 bg-main border border-line text-content focus:outline-none focus:border-amber-500"
                         />
                     )}
@@ -190,7 +296,7 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
 
                 <div>
                     <label className="block text-muted uppercase mb-1">
-                        {t('students.form.likesLabel')}
+                        {t('students.form.likesLabel', 'Gostos e Interesses')}
                     </label>
                     <input
                         type="text"
@@ -202,7 +308,7 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
 
                 <div>
                     <label className="block text-muted uppercase mb-1">
-                        {t('students.form.dislikesLabel')}
+                        {t('students.form.dislikesLabel', 'Aversões')}
                     </label>
                     <input
                         type="text"
@@ -232,20 +338,20 @@ function StudentFormContent({ initialData, onClose, onSubmit }) {
                     onClick={onClose}
                     className="px-3.5 py-2 border border-line text-muted hover:text-content uppercase cursor-pointer transition-colors"
                 >
-                    {t('students.form.cancel')}
+                    {t('students.form.cancel', 'Cancelar')}
                 </button>
                 <button
                     type="submit"
                     className="px-3.5 py-2 bg-accent text-main font-bold uppercase cursor-pointer hover:opacity-90 transition-opacity"
                 >
-                    {t('students.form.save')}
+                    {t('students.form.save', 'Guardar')}
                 </button>
             </div>
         </form>
     )
 }
 
-export default function StudentFormModal({ isOpen, initialData, onClose, onSubmit }) {
+export default function StudentFormModal({ isOpen, initialData, groups, onClose, onSubmit }) {
     const { t } = useTranslation()
     useEscapeKey(onClose, isOpen)
 
@@ -256,7 +362,7 @@ export default function StudentFormModal({ isOpen, initialData, onClose, onSubmi
             <div className="bg-main border border-line shadow-xl w-full max-w-lg font-mono text-xs text-content overflow-hidden">
                 <div className="flex items-center justify-between p-4 border-b border-line bg-content/5">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-content">
-                        {initialData ? t('students.form.editTitle') : t('students.form.addTitle')}
+                        {initialData ? t('students.form.editTitle', 'Editar Aluno') : t('students.form.addTitle', 'Adicionar Aluno')}
                     </h3>
                     <button
                         onClick={onClose}
@@ -269,6 +375,7 @@ export default function StudentFormModal({ isOpen, initialData, onClose, onSubmi
                 <StudentFormContent
                     key={initialData?.id || 'new-student'}
                     initialData={initialData}
+                    groups={groups}
                     onClose={onClose}
                     onSubmit={onSubmit}
                 />

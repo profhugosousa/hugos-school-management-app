@@ -260,70 +260,131 @@ export const studentService = {
 		return this.getById(studentId, academicYearId)
 	},
 
-	async update(studentId, args = {}) {
-		const processNumber = args.processNumber || args.process_number
-		const name = args.name
-		const birthdate = args.birthdate
-		const gender = args.gender
-		const photoUrl = args.photoUrl || args.photo_url
-		const extraInfo = args.extraInfo || args.extra_info
-		const groupId = args.groupId || args.group_id
-		const academicYearId = args.academicYearId || args.academic_year_id
-		const groupNumber = args.groupNumber ?? args.group_number ?? args.number
-		const guardianInfo = args.guardianInfo || args.guardian_info
+	async updateStudent(id, payload) {
+		const studentData = payload.studentData || payload
 
-		const updates = []
+		const processNumber = String(studentData.process_number || studentData.processNumber || '').trim()
+		const name = String(studentData.name || '').trim()
+		const birthdate = studentData.birthdate || null
+		const gender = studentData.gender || 'undefined'
+		const photoUrl = studentData.photo_url || studentData.photoUrl || null
+		const extraInfo = studentData.extra_info || studentData.extraInfo || null
 
-		if (processNumber !== undefined) updates.push(supabase.from('student_process_numbers').upsert({ student_id: studentId, process_number: processNumber }, { onConflict: 'student_id' }))
-		if (name !== undefined) updates.push(supabase.from('student_names').upsert({ student_id: studentId, name }, { onConflict: 'student_id' }))
-		if (gender !== undefined) updates.push(supabase.from('student_genders').upsert({ student_id: studentId, gender }, { onConflict: 'student_id' }))
-		if (birthdate !== undefined) updates.push(supabase.from('student_birthdates').upsert({ student_id: studentId, birthdate }, { onConflict: 'student_id' }))
-		if (photoUrl !== undefined) updates.push(supabase.from('student_photo_urls').upsert({ student_id: studentId, photo_url: photoUrl }, { onConflict: 'student_id' }))
-		if (extraInfo !== undefined) updates.push(supabase.from('student_extra_infos').upsert({ student_id: studentId, extra_info: extraInfo }, { onConflict: 'student_id' }))
+		const yearId = payload.academic_year_id || payload.academicYearId || payload.yearId || studentData.academic_year_id || studentData.academicYearId || studentData.yearId
+		const groupId = payload.group_id || payload.groupId || payload.formId || studentData.group_id || studentData.groupId || studentData.formId
+		const groupNumber = payload.group_number ?? payload.groupNumber ?? payload.number ?? studentData.group_number ?? studentData.groupNumber ?? studentData.number
 
-		const results = await Promise.all(updates)
-		assertNoErrors(results, 'Failed updating student attributes')
+		const guardianInfo = payload.guardian_info || payload.guardianInfo || studentData.guardian_info || studentData.guardianInfo || null
 
+		// 1. Upsert 6NF student attributes across respective tables
+		const attributePromises = []
+
+		if (processNumber) {
+			attributePromises.push(
+				supabase.from('student_process_numbers').upsert({ student_id: id, process_number: processNumber }, { onConflict: 'student_id' })
+			)
+		}
+		if (name) {
+			attributePromises.push(
+				supabase.from('student_names').upsert({ student_id: id, name }, { onConflict: 'student_id' })
+			)
+		}
+		attributePromises.push(
+			supabase.from('student_genders').upsert({ student_id: id, gender }, { onConflict: 'student_id' })
+		)
+
+		if (birthdate) {
+			attributePromises.push(
+				supabase.from('student_birthdates').upsert({ student_id: id, birthdate }, { onConflict: 'student_id' })
+			)
+		} else {
+			attributePromises.push(
+				supabase.from('student_birthdates').delete().eq('student_id', id)
+			)
+		}
+
+		if (photoUrl) {
+			attributePromises.push(
+				supabase.from('student_photo_urls').upsert({ student_id: id, photo_url: photoUrl }, { onConflict: 'student_id' })
+			)
+		} else {
+			attributePromises.push(
+				supabase.from('student_photo_urls').delete().eq('student_id', id)
+			)
+		}
+
+		if (extraInfo) {
+			attributePromises.push(
+				supabase.from('student_extra_infos').upsert({ student_id: id, extra_info: extraInfo }, { onConflict: 'student_id' })
+			)
+		} else {
+			attributePromises.push(
+				supabase.from('student_extra_infos').delete().eq('student_id', id)
+			)
+		}
+
+		const attrResults = await Promise.all(attributePromises)
+		assertNoErrors(attrResults, 'Failed updating student attributes')
+
+		// 2. Guardian Upsert / Update
 		if (guardianInfo && (guardianInfo.name || guardianInfo.phone || guardianInfo.email)) {
-			const { data: existingG } = await supabase
+			const { data: existingGLinks } = await supabase
 				.from('student_guardians')
 				.select('guardian_id')
-				.eq('student_id', studentId)
-				.maybeSingle()
+				.eq('student_id', id)
 
-			let gId = existingG?.guardian_id
+			let guardianId = existingGLinks?.[0]?.guardian_id
 
-			if (!gId) {
-				const { data: gRoot } = await supabase.from('guardians').insert({}).select('id').single()
-				if (gRoot) {
-					gId = gRoot.id
-					await supabase.from('student_guardians').insert({ student_id: studentId, guardian_id: gId })
+			if (!guardianId) {
+				const { data: gRoot, error: gErr } = await supabase
+					.from('guardians')
+					.insert({})
+					.select('id')
+					.single()
+
+				if (!gErr && gRoot) {
+					guardianId = gRoot.id
+					await supabase.from('student_guardians').insert({ student_id: id, guardian_id: guardianId })
 				}
 			}
 
-			if (gId) {
-				const gUpdates = []
-				if (guardianInfo.name !== undefined) gUpdates.push(supabase.from('guardian_names').upsert({ guardian_id: gId, name: guardianInfo.name }, { onConflict: 'guardian_id' }))
-				if (guardianInfo.phone !== undefined) gUpdates.push(supabase.from('guardian_phones').upsert({ guardian_id: gId, phone_number: guardianInfo.phone }, { onConflict: 'guardian_id' }))
-				if (guardianInfo.email !== undefined) gUpdates.push(supabase.from('guardian_emails').upsert({ guardian_id: gId, email: guardianInfo.email }, { onConflict: 'guardian_id' }))
-				const gRes = await Promise.all(gUpdates)
-				assertNoErrors(gRes, 'Failed updating guardian attributes')
-
-				if (guardianInfo.relationship !== undefined) {
-					await supabase.from('student_guardian_relationships').upsert({
-						student_id: studentId,
-						guardian_id: gId,
-						relationship: guardianInfo.relationship
-					}, { onConflict: 'student_id,guardian_id' })
+			if (guardianId) {
+				const gPayloads = []
+				if (guardianInfo.name) {
+					gPayloads.push(supabase.from('guardian_names').upsert({ guardian_id: guardianId, name: guardianInfo.name }, { onConflict: 'guardian_id' }))
 				}
+				if (guardianInfo.phone) {
+					gPayloads.push(supabase.from('guardian_phones').upsert({ guardian_id: guardianId, phone_number: guardianInfo.phone }, { onConflict: 'guardian_id' }))
+				} else {
+					gPayloads.push(supabase.from('guardian_phones').delete().eq('guardian_id', guardianId))
+				}
+				if (guardianInfo.email) {
+					gPayloads.push(supabase.from('guardian_emails').upsert({ guardian_id: guardianId, email: guardianInfo.email }, { onConflict: 'guardian_id' }))
+				} else {
+					gPayloads.push(supabase.from('guardian_emails').delete().eq('guardian_id', guardianId))
+				}
+
+				if (guardianInfo.relationship) {
+					gPayloads.push(
+						supabase.from('student_guardian_relationships').upsert({
+							student_id: id,
+							guardian_id: guardianId,
+							relationship: guardianInfo.relationship
+						}, { onConflict: 'student_id,guardian_id' })
+					)
+				}
+
+				const gResults = await Promise.all(gPayloads)
+				assertNoErrors(gResults, 'Failed updating guardian details')
 			}
 		}
 
-		if (groupId !== undefined && academicYearId) {
-			await setStudentEnrolment(studentId, { groupId, academicYearId, groupNumber })
+		// 3. Enrolment Update (Group & Call Number)
+		if (groupId && yearId) {
+			await setStudentEnrolment(id, { groupId, academicYearId: yearId, groupNumber })
 		}
 
-		return this.getById(studentId, academicYearId)
+		return this.getById(id, yearId)
 	},
 
 	async delete(studentId) {
@@ -349,7 +410,6 @@ export const studentService = {
 	async bulkImport(studentsList = [], { conflictStrategy = 'skip', defaultAcademicYearId = null, defaultGroupId = null } = {}) {
 		if (!studentsList.length) return { importedCount: 0, updatedCount: 0, skippedCount: 0 }
 
-		// 1. Resolve fallback Active Academic Year if default not passed
 		let fallbackYearId = defaultAcademicYearId
 		if (!fallbackYearId) {
 			const { data: activeYearData } = await supabase
@@ -360,7 +420,6 @@ export const studentService = {
 			fallbackYearId = activeYearData?.academic_year_id || null
 		}
 
-		// 2. Fetch Group & Academic Year resolution maps
 		const { data: dbGroups } = await supabase.from('view_groups').select('id, name, display_name')
 		const groupResolver = new Map()
 		dbGroups?.forEach((g) => {
@@ -376,7 +435,6 @@ export const studentService = {
 			if (y.label) yearResolver.set(y.label.toLowerCase().trim(), y.academic_year_id)
 		})
 
-		// 3. Duplicate Check
 		const processNumbers = studentsList.map((s) => String(s.process_number || s.processNumber || '').trim()).filter(Boolean)
 		const existingRecords = await this.checkDuplicates(processNumbers)
 		const existingMap = new Map(existingRecords.map((r) => [r.process_number, r.id]))
@@ -400,7 +458,6 @@ export const studentService = {
 			}
 		})
 
-		// Helper to resolve Group ID (accepts UUID directly, or matches name via resolver)
 		const resolveGroup = (rawGroup) => {
 			const str = String(rawGroup || '').trim()
 			if (!str) return defaultGroupId || null
@@ -408,7 +465,6 @@ export const studentService = {
 			return groupResolver.get(str) || groupResolver.get(str.toLowerCase()) || defaultGroupId || null
 		}
 
-		// Helper to resolve Academic Year ID (accepts UUID directly, or matches label)
 		const resolveYear = (rawYear) => {
 			const str = String(rawYear || '').trim()
 			if (!str) return fallbackYearId || null
@@ -416,9 +472,6 @@ export const studentService = {
 			return yearResolver.get(str) || yearResolver.get(str.toLowerCase()) || fallbackYearId || null
 		}
 
-		// ---------------------------------------------------------------------
-		// BATCH CREATE
-		// ---------------------------------------------------------------------
 		if (toCreate.length > 0) {
 			const studentRoots = []
 			const processPayloads = []
@@ -538,9 +591,6 @@ export const studentService = {
 			}
 		}
 
-		// ---------------------------------------------------------------------
-		// BATCH UPDATE
-		// ---------------------------------------------------------------------
 		if (toUpdate.length > 0) {
 			const processPayloads = []
 			const namePayloads = []
@@ -636,3 +686,10 @@ export const studentService = {
 		}
 	}
 }
+
+// Aliases for hook and caller compatibility
+studentService.update = studentService.updateStudent
+studentService.createStudent = studentService.create
+studentService.createStudentWithEnrolment = studentService.create
+studentService.deleteStudent = studentService.delete
+studentService.getStudents = studentService.getAll
