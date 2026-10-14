@@ -4,7 +4,6 @@ import { MainLayout } from './components/layout/MainLayout'
 import { AcademicYearProvider } from './context/AcademicYearProvider'
 import { AuthProvider } from './context/AuthContext'
 import { NotificationProvider } from './context/NotificationProvider'
-import { SidebarProvider } from './context/SidebarContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { AcademicYearsPage } from './features/academic-years/AcademicYearsPage'
 import { LoginPage } from './features/auth/LoginPage'
@@ -67,13 +66,11 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <SidebarProvider>
-          <NotificationProvider>
-            <AcademicYearProvider>
-              <AppContent />
-            </AcademicYearProvider>
-          </NotificationProvider>
-        </SidebarProvider>
+        <NotificationProvider>
+          <AcademicYearProvider>
+            <AppContent />
+          </AcademicYearProvider>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   )
