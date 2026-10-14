@@ -5,6 +5,7 @@ import { DateFilterInput } from '../../../components/ui/DateFilterInput'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
 import { SUBJECTS } from '../../../constants/subjects'
+import { getTodayFormatted } from '../../../utils/dateUtils'
 
 export const LessonFilters = ({ filters, setFilters, groups = [] }) => {
     const { t } = useTranslation()
@@ -15,8 +16,24 @@ export const LessonFilters = ({ filters, setFilters, groups = [] }) => {
     }
 
     const toggleDateMode = () => {
-        setIsRangeMode(!isRangeMode)
-        setFilters(prev => ({ ...prev, dateStart: '', dateEnd: '', singleDate: '' }))
+        const nextRangeMode = !isRangeMode
+        setIsRangeMode(nextRangeMode)
+
+        if (!nextRangeMode) {
+            // Switching to Single Date Mode -> set singleDate to today if currently empty
+            setFilters(prev => ({
+                ...prev,
+                dateStart: '',
+                dateEnd: '',
+                singleDate: prev.singleDate || getTodayFormatted()
+            }))
+        } else {
+            // Switching to Range Mode -> clear singleDate
+            setFilters(prev => ({
+                ...prev,
+                singleDate: ''
+            }))
+        }
     }
 
     return (

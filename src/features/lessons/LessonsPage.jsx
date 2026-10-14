@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { CompleteModal } from '../../components/common/modals/CompleteModal'
 import { ConfirmModal } from '../../components/common/modals/ConfirmModal'
 import { useLessons } from '../../hooks/useLessons'
+import { getTodayFormatted } from '../../utils/dateUtils'
 import { LessonEvaluationModal } from '../lessons/components/LessonEvaluationModal'
 import { LessonExportModal } from '../lessons/components/LessonExportModal'
 import { LessonFilters } from '../lessons/components/LessonFilters'
@@ -40,7 +41,7 @@ export const LessonsPage = () => {
 
     const [sortField, setSortField] = useState('date')
     const [sortDirection, setSortDirection] = useState('asc')
-    const [filters, setFilters] = useState({})
+    const [filters, setFilters] = useState({ singleDate: getTodayFormatted() })
 
     const handleOpenCreate = () => {
         setEditingLesson(null)
