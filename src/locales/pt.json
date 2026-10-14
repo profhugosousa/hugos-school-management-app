@@ -125,7 +125,8 @@
       "time": "Horário",
       "room": "Sala",
       "actions": "Ações",
-      "number": "N.º"
+      "number": "N.º",
+      "sort": "Sort by"
     },
     "modal": {
       "createTitle": "Criar Nova Aula",

@@ -125,7 +125,8 @@
       "time": "Time",
       "room": "Room",
       "actions": "Actions",
-      "number": "No."
+      "number": "No.",
+      "sort": "Sort by"
     },
     "modal": {
       "createTitle": "Create New Lesson",
