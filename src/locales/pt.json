@@ -8,7 +8,8 @@
     "planning": "Unidades de Planeamento",
     "evaluations": "Avaliações",
     "settings": "Configurações",
-    "academicYears": "Anos Letivos"
+    "academicYears": "Anos Letivos",
+    "groups": "Turmas"
   },
   "actions": {
     "save": "Guardar",
