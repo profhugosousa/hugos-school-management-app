@@ -1,12 +1,12 @@
 import { Loader2 } from 'lucide-react'
 
 const VARIANTS = {
-    default: 'bg-content text-main hover:opacity-90',
-    primary: 'bg-content text-main hover:opacity-90',
-    secondary: 'bg-content/50 text-main hover:bg-content/65',
+    default: 'bg-accent text-main border border-accent hover:opacity-90',
+    primary: 'bg-accent text-main border border-accent hover:opacity-90',
+    secondary: 'bg-content/10 text-content border border-line hover:bg-content/20',
     outline: 'bg-transparent text-content border border-line hover:bg-content/10',
     ghost: 'bg-transparent text-content hover:bg-content/10',
-    danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20'
+    danger: 'bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20'
 }
 
 export const Button = ({
@@ -20,7 +20,7 @@ export const Button = ({
 
     return (
         <button
-            className={`py-2.5 px-4 font-semibold text-xs uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] cursor-pointer ${variantStyles} ${className}`}
+            className={`py-2.5 px-4 font-mono font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] cursor-pointer ${variantStyles} ${className}`}
             disabled={loading || props.disabled}
             {...props}
         >
