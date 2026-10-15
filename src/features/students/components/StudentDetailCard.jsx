@@ -1,8 +1,8 @@
 import { UserCheck, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { StudentBadges } from './Badges'
-import { StudentProgressChart } from './ProgressEvaluationChart'
-import { StudentQuickActions } from './QuickAction'
+import { StudentBadges } from './Badges.jsx'
+import { StudentProgressChart } from './ProgressEvaluationChart.jsx'
+import { StudentQuickActions } from './QuickAction.jsx'
 import { StudentIncidentLog } from './StudentIncidentLog'
 
 export default function StudentDetailCard({ student, onClose }) {
