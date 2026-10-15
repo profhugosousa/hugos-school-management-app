@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useActiveAcademicYear } from '../../hooks/useActiveAcademicYear'
 import { useGroups } from '../../hooks/useGroups'
 import { GroupDeleteModal } from './components/GroupDeleteModal'
 import { GroupFormModal } from './components/GroupFormModal'
@@ -6,7 +7,8 @@ import { GroupHeader } from './components/GroupHeader'
 import { GroupTable } from './components/GroupTable'
 
 export const GroupsPage = () => {
-    const { groups, levels, loading, createGroup, updateGroup, deleteGroup } = useGroups()
+    const { groups, levels, loading, refresh, createGroup, updateGroup, deleteGroup } = useGroups()
+    const { activeYear } = useActiveAcademicYear()
     const [isFormOpen, setIsFormOpen] = useState(false)
     const [editingGroup, setEditingGroup] = useState(null)
     const [deletingGroupId, setDeletingGroupId] = useState(null)
@@ -42,9 +44,11 @@ export const GroupsPage = () => {
 
             <GroupTable
                 groups={groups}
+                activeYearId={activeYear?.id}
                 loading={loading}
                 onEdit={handleOpenEdit}
                 onDelete={(id) => setDeletingGroupId(id)}
+                onRefresh={refresh}
             />
 
             {isFormOpen && (
