@@ -90,6 +90,43 @@ export const useLessons = () => {
         }
     }
 
+    const importLessonContent = async ({ targetLessonId, sourceLesson, selectedFields }) => {
+        setSubmitting(true)
+        try {
+            const existing = lessons.find((l) => l.id === targetLessonId) || (await lessonService.getById(targetLessonId))
+
+            const payload = {
+                groupId: existing.group_id || existing.groupId,
+                duration: existing.duration || '45',
+                lessonDate: existing.lesson_date || existing.lessonDate,
+                lessonTime: existing.lesson_time || existing.lessonTime,
+                subject: selectedFields.subject ? sourceLesson.subject : existing.subject,
+                summary: selectedFields.summary ? sourceLesson.summary : existing.summary,
+                attentionBox: selectedFields.attentionBox
+                    ? (sourceLesson.attention_box || sourceLesson.attentionBox)
+                    : (existing.attention_box || existing.attentionBox),
+                teacherNotes: selectedFields.teacherNotes
+                    ? (sourceLesson.teacher_notes || sourceLesson.teacherNotes)
+                    : (existing.teacher_notes || existing.teacherNotes),
+                stepByStep: selectedFields.stepByStep
+                    ? (sourceLesson.step_by_step || sourceLesson.stepByStep)
+                    : (existing.step_by_step || existing.stepByStep),
+                materials: selectedFields.materials
+                    ? sourceLesson.materials
+                    : existing.materials
+            }
+
+            await lessonService.update(targetLessonId, payload)
+            await fetchData()
+            return true
+        } catch (err) {
+            setError(err.message)
+            return false
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
     const exportLesson = async (sourceLesson, config) => {
         setSubmitting(true)
         try {
@@ -170,6 +207,8 @@ export const useLessons = () => {
         }
     }
 
+
+
     return {
         lessons,
         groups,
@@ -181,6 +220,7 @@ export const useLessons = () => {
         updateLesson,
         deleteLesson,
         exportLesson,
+        importLessonContent,
         refresh: fetchData
     }
 }

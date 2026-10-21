@@ -14,7 +14,8 @@ export const LessonTable = ({
     onDelete,
     onStudentView,
     onEvaluate,
-    onExport
+    onExport,
+    onImportContent
 }) => {
     const { t } = useTranslation()
     const [expandedId, setExpandedId] = useState(null)
@@ -154,6 +155,7 @@ export const LessonTable = ({
                                         onEvaluate={onEvaluate}
                                         onEdit={onEdit}
                                         onExport={onExport}
+                                        onImportContent={onImportContent}
                                         onDelete={onDelete}
                                     />
                                 </div>

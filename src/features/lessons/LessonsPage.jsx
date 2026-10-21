@@ -9,6 +9,7 @@ import { LessonExportModal } from '../lessons/components/LessonExportModal'
 import { LessonFilters } from '../lessons/components/LessonFilters'
 import { LessonFormModal } from '../lessons/components/LessonFormModal'
 import { LessonHeader } from '../lessons/components/LessonHeader'
+import { LessonImportFromModal } from '../lessons/components/LessonImportFromModal'
 import { LessonImportModal } from '../lessons/components/LessonImportModal'
 import { LessonStudentViewModal } from '../lessons/components/LessonStudentViewModal'
 import { LessonTable } from '../lessons/components/LessonTable'
@@ -23,6 +24,7 @@ export const LessonsPage = () => {
         activeYear,
         createLesson,
         updateLesson,
+        importLessonContent,
         deleteLesson,
         exportLesson,
         refresh
@@ -34,6 +36,7 @@ export const LessonsPage = () => {
     const [studentViewLesson, setStudentViewLesson] = useState(null)
     const [evaluatingLesson, setEvaluatingLesson] = useState(null)
     const [exportingLesson, setExportingLesson] = useState(null)
+    const [importTargetLesson, setImportTargetLesson] = useState(null)
     const [pendingFormData, setPendingFormData] = useState(null)
     const [confirmUpdateOpen, setConfirmUpdateOpen] = useState(false)
     const [confirmDeleteId, setConfirmDeleteId] = useState(null)
@@ -76,6 +79,14 @@ export const LessonsPage = () => {
             setConfirmUpdateOpen(false)
             setPendingFormData(null)
             setEditingLesson(null)
+            setCompleteModalState({ isOpen: true, type: 'update' })
+        }
+    }
+
+    const handleImportContentSubmit = async (config) => {
+        const success = await importLessonContent(config)
+        if (success) {
+            setImportTargetLesson(null)
             setCompleteModalState({ isOpen: true, type: 'update' })
         }
     }
@@ -167,6 +178,7 @@ export const LessonsPage = () => {
                 onStudentView={(lesson) => setStudentViewLesson(lesson)}
                 onEvaluate={(lesson) => setEvaluatingLesson(lesson)}
                 onExport={(lesson) => setExportingLesson(lesson)}
+                onImportContent={(lesson) => setImportTargetLesson(lesson)}
             />
 
             <LessonFormModal
@@ -182,6 +194,16 @@ export const LessonsPage = () => {
             <LessonImportModal
                 isOpen={isImportOpen}
                 onClose={() => setIsImportOpen(false)}
+            />
+
+            <LessonImportFromModal
+                isOpen={Boolean(importTargetLesson)}
+                targetLesson={importTargetLesson}
+                groups={groups}
+                lessons={lessons}
+                submitting={submitting}
+                onClose={() => setImportTargetLesson(null)}
+                onImport={handleImportContentSubmit}
             />
 
             <LessonStudentViewModal
